@@ -1,32 +1,38 @@
 ---
   subjects:
-  - preferredParents:
-    nonPreferredParents:
-    preferredTerms:
+  - parentRelationship:
+      preferredParents:
+      nonPreferredParents:
+    term:
+      preferredTerms:
       - termText: emotion
-    nonPreferredTerms:
+      nonPreferredTerms:
       - termText: emotions
       - termText: 情緒
     descriptiveNotes:
-      - noteText: Refers to a complex phenomena and quality of consciousness, featuring the synthesis or combination of subjective experiences and perceptions, expressive physiological and psychological behaviors, and the excitation or stimulation of the nervous system. Among psychological studies, the concept is associated with ideas on personality formation, rational and irrational thinking, and cognitive motivation.
-      - noteText: 意指意識所呈現的複雜現象及特性。情感涉及了合成或組合主觀經驗與感知、具表達意義的生理與心理行為、以及神經系統的興奮或刺激。在心理學研究中，情感的概念與個性形成、理性與非理性思維、以及認知動機有關。
+    - noteText: Refers to a complex phenomena and quality of consciousness, featuring the synthesis or combination of subjective experiences and perceptions, expressive physiological and psychological behaviors, and the excitation or stimulation of the nervous system. Among psychological studies, the concept is associated with ideas on personality formation, rational and irrational thinking, and cognitive motivation.
+    - noteText: 意指意識所呈現的複雜現象及特性。情感涉及了合成或組合主觀經驗與感知、具表達意義的生理與心理行為、以及神經系統的興奮或刺激。在心理學研究中，情感的概念與個性形成、理性與非理性思維、以及認知動機有關。
 
-  - preferredParents:
+  - parentRelationship:
+      preferredParents:
       - parentString: emotion
-    nonPreferredParents:
-    preferredTerms:
+      nonPreferredParents:
+    term:
+      preferredTerms:
       - termText: positive emotions
-    nonPreferredTerms:
+      nonPreferredTerms:
       - termText: positive emotion
     descriptiveNotes:
-      - noteText: subjective state of feeling defined as good or beneficial.
+    - noteText: subjective state of feeling defined as good or beneficial.
 
-  - preferredParents:
+  - parentRelationship:
+      preferredParents:
       - parentString: emotion
-    nonPreferredParents:
-    preferredTerms:
+      nonPreferredParents:
+    term:
+      preferredTerms:
       - termText: negative emotions
-    nonPreferredTerms:
+      nonPreferredTerms:
       - termText: negative emotion
     descriptiveNotes:
       - noteText: subjective state of feeling defined as bad or harmful.

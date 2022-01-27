@@ -5,15 +5,21 @@ type Thesaurus struct {
 }
 
 type Subject struct {
-	PreferredParents    interface{} `json:"preferredParents"`
-	NonPreferredParents interface{} `json:"nonPreferredParents"`
-	PreferredTerms      []struct {
-		TermText string `json:"termText"`
-	} `json:"preferredTerms"`
-	NonPreferredTerms []struct {
-		TermText string `json:"termText"`
-	} `json:"nonPreferredTerms"`
-	DescriptiveNotes []struct {
-		NoteText string `json:"noteText"`
-	} `json:"descriptiveNotes"`
+	ParentRelationship struct {
+		PreferredParents    []Term `json:"preferredParents"`
+		NonPreferredParents []Term `json:"nonPreferredParents"`
+	} `json:"parentRelationship"`
+	Term struct {
+		PreferredTerms    []Term `json:"preferredTerms"`
+		NonPreferredTerms []Term `json:"nonPreferredTerms"`
+	} `json:"term"`
+	DescriptiveNotes []Note `json:"descriptiveNotes"`
+}
+
+type Term struct {
+	TermText string `json:"termText"`
+}
+
+type Note struct {
+	NoteText string `json:"noteText"`
 }
