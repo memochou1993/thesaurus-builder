@@ -6,32 +6,17 @@ import (
 )
 
 var (
-	source *thesaurus.Thesaurus
-	root   *thesaurus.Node
+	t *thesaurus.Thesaurus
 )
 
 func main() {
 	var err error
-	source, err = thesaurus.Parse("source.yaml")
-	if err != nil {
+	if t, err = thesaurus.Parse("thesaurus.yaml"); err != nil {
 		log.Fatal(err)
 	}
-	for _, s := range source.Subjects {
-		subject := s
-		if len(subject.ParentRelationship.PreferredParents) == 0 {
-			root = thesaurus.NewNode(subject)
-			continue
-		}
-		if len(subject.Term.PreferredTerms) == 0 {
-			continue
-		}
-		if subject.ParentRelationship.PreferredParents[0].TermText == root.Subject.Term.PreferredTerms[0].TermText {
-			root.AppendChild(thesaurus.NewNode(subject))
-			continue
-		}
+	var root *thesaurus.Node
+	if root, err = thesaurus.BuildTree(t.Subjects); err != nil {
+		log.Fatal(err)
 	}
-
-	for _, term := range root.Children {
-		log.Println("term:", term.Subject.Term.PreferredTerms[0].TermText)
-	}
+	thesaurus.PrintTree(root, 0)
 }

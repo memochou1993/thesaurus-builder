@@ -37,15 +37,15 @@ func NewThesaurus() *Thesaurus {
 }
 
 func Parse(filename string) (*Thesaurus, error) {
-	source := NewThesaurus()
+	t := NewThesaurus()
 	b, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return nil, err
 	}
-	if err := yaml.Unmarshal(b, &source); err != nil {
+	if err := yaml.Unmarshal(b, &t); err != nil {
 		return nil, err
 	}
-	return source, nil
+	return t, nil
 }
 
 func Build(path string) error {
