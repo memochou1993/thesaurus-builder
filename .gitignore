@@ -1,2 +1,3 @@
-dist
-preview
+/dist
+/preview
+/.idea

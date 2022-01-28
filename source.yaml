@@ -20,7 +20,7 @@
       - termText: positive emotion
     parentRelationship:
       preferredParents:
-      - parentString: emotion
+      - termText: emotion
       nonPreferredParents:
     descriptiveNotes:
     - noteText: A subjective state of feeling defined as good or beneficial.
@@ -32,7 +32,7 @@
       - termText: negative emotion
     parentRelationship:
       preferredParents:
-      - parentString: emotion
+      - termText: emotion
       nonPreferredParents:
     descriptiveNotes:
       - noteText: A subjective state of feeling defined as bad or harmful.
