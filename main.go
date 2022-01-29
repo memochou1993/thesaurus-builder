@@ -5,17 +5,14 @@ import (
 	"log"
 )
 
-var (
-	t *thesaurus.Thesaurus
-)
-
 func main() {
+	var t *thesaurus.Thesaurus
 	var err error
-	if t, err = thesaurus.Parse("thesaurus.yaml"); err != nil {
+	if t, err = thesaurus.NewThesaurus("thesaurus.yaml"); err != nil {
 		log.Fatal(err)
 	}
 	var root *thesaurus.Node
-	if root, err = thesaurus.BuildTree(t.Subjects); err != nil {
+	if root, err = thesaurus.NewTree(t.Subjects); err != nil {
 		log.Fatal(err)
 	}
 	thesaurus.PrintTree(root, 0)

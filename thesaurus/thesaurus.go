@@ -23,7 +23,7 @@ type Subject struct {
 		PreferredTerms    Terms `yaml:"preferredTerms"`
 		NonPreferredTerms Terms `yaml:"nonPreferredTerms"`
 	} `yaml:"term"`
-	DescriptiveNotes []*Note `yaml:"descriptiveNotes"`
+	DescriptiveNotes Notes `yaml:"descriptiveNotes"`
 }
 
 type Terms []*Term
@@ -43,21 +43,19 @@ type Term struct {
 	TermText string `yaml:"termText"`
 }
 
+type Notes []*Note
+
 type Note struct {
 	NoteText string `yaml:"noteText"`
 }
 
-func NewThesaurus() *Thesaurus {
-	return &Thesaurus{}
-}
-
-func Parse(filename string) (*Thesaurus, error) {
-	t := NewThesaurus()
+func NewThesaurus(filename string) (*Thesaurus, error) {
+	t := &Thesaurus{}
 	b, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return nil, err
 	}
-	if err := yaml.Unmarshal(b, &t); err != nil {
+	if err := yaml.Unmarshal(b, t); err != nil {
 		return nil, err
 	}
 	return t, nil
