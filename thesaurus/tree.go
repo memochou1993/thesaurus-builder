@@ -10,30 +10,34 @@ type Node struct {
 	Children []*Node
 }
 
+func (n *Node) FirstPreferredParent() *Term {
+	return n.Subject.ParentRelationship.PreferredParents.First()
+}
+
+func (n *Node) FirstPreferredTerm() *Term {
+	return n.Subject.Term.PreferredTerms.First()
+}
+
 func (n *Node) AppendChild(node *Node) {
 	n.Children = append(n.Children, node)
 }
 
-func (n *Node) Contains(node *Node) bool {
+func (n *Node) ContainsChild(node *Node) bool {
 	for _, child := range n.Children {
-		for _, childTerm := range child.Subject.Term.PreferredTerms {
-			for _, nodeTerm := range node.Subject.Term.PreferredTerms {
-				if childTerm.TermText == nodeTerm.TermText {
-					return true
-				}
-			}
+		if child.FirstPreferredParent().TermText == node.FirstPreferredTerm().TermText {
+			return true
 		}
 	}
 	return false
 }
 
-func NewNode(s Subject) *Node {
+func NewNode(subject Subject) *Node {
 	return &Node{
-		Subject: s,
+		Subject: subject,
 	}
 }
 
-func BuildTree(subjects []Subject) (root *Node, err error) {
+func BuildTree(subjects Subjects) (root *Node, err error) {
 	table := make(map[string]*Node, 1024)
 	if root, err = buildRoot(subjects, table); err != nil {
 		return nil, err
@@ -44,63 +48,56 @@ func BuildTree(subjects []Subject) (root *Node, err error) {
 	return root, nil
 }
 
-func buildRoot(subjects []Subject, table map[string]*Node) (root *Node, err error) {
-	for _, subject := range subjects {
-		if len(subject.ParentRelationship.PreferredParents) == 0 {
-			if len(subject.Term.PreferredTerms) == 0 {
-				return nil, errors.New("invalid root")
-			}
-			root = NewNode(subject)
-			for _, term := range subject.Term.PreferredTerms {
-				table[term.TermText] = root
-				break
-			}
-			return
+func buildRoot(subjects Subjects, table map[string]*Node) (root *Node, err error) {
+	for i, subject := range subjects {
+		if subject.Term.PreferredTerms.IsEmpty() {
+			return nil, errors.New(fmt.Sprintf("preferred term missing (subject #%d)", i+1))
 		}
+		preferredTerm := subject.Term.PreferredTerms.First()
+		if subject.ParentRelationship.PreferredParents.IsEmpty() {
+			if root != nil {
+				term := subject.Term.PreferredTerms.First()
+				return nil, errors.New(fmt.Sprintf("preferred parent missing (subject \"%s\")", term.TermText))
+			}
+			root = NewNode(*subject)
+			table[preferredTerm.TermText] = root
+			continue
+		}
+		table[preferredTerm.TermText] = nil
 	}
-	return nil, errors.New("root missing")
+	if root == nil {
+		return nil, errors.New("root missing")
+	}
+	return
 }
 
-func buildBranch(subjects []Subject, table map[string]*Node) (err error) {
-	var orphans []Subject
-	for _, subject := range subjects {
-		if len(subject.ParentRelationship.PreferredParents) == 0 {
+func buildBranch(subjects Subjects, table map[string]*Node) (err error) {
+	var orphans Subjects
+	for i, subject := range subjects {
+		if subject.ParentRelationship.PreferredParents.IsEmpty() {
 			continue
 		}
-		if len(subject.Term.PreferredTerms) == 0 {
-			continue
+		if subject.Term.PreferredTerms.IsEmpty() {
+			return errors.New(fmt.Sprintf("preferred term missing (subject #%d)", i+1))
 		}
-		isOrphan := false
-		for _, parent := range subject.ParentRelationship.PreferredParents {
-			if parent, ok := table[parent.TermText]; ok {
-				child := NewNode(subject)
-				if !parent.Contains(child) {
-					parent.AppendChild(child)
-				}
-				for _, term := range subject.Term.PreferredTerms {
-					if _, ok := table[term.TermText]; !ok {
-						table[term.TermText] = child
-					}
-					break
-				}
-				continue
+		preferredParent := subject.ParentRelationship.PreferredParents.First()
+		parent, ok := table[preferredParent.TermText]
+		if !ok {
+			term := subject.Term.PreferredTerms.First()
+			return errors.New(fmt.Sprintf("preferred parent missing (subject \"%s\")", term.TermText))
+		}
+		if parent != nil {
+			child := NewNode(*subject)
+			if !parent.ContainsChild(child) {
+				parent.AppendChild(child)
 			}
-			isOrphan = true
+			preferredTerm := subject.Term.PreferredTerms.First()
+			table[preferredTerm.TermText] = child
+			continue
 		}
-		if isOrphan {
-			orphans = append(orphans, subject)
-		}
+		orphans = append(orphans, subject)
 	}
 	if len(orphans) == len(subjects) {
-		if len(orphans) != 0 {
-			for _, subject := range orphans {
-				for _, parent := range subject.ParentRelationship.PreferredParents {
-					if _, ok := table[parent.TermText]; !ok {
-						return errors.New(fmt.Sprintf("parent missing: %s", parent.TermText))
-					}
-				}
-			}
-		}
 		return
 	}
 	return buildBranch(orphans, table)
@@ -111,10 +108,8 @@ func PrintTree(node *Node, level int) {
 	for i := 0; i < level; i++ {
 		indent += "  "
 	}
-	for _, term := range node.Subject.Term.PreferredTerms {
-		fmt.Printf("%s|- %s\n", indent, term.TermText)
-		break
-	}
+	preferredTerm := node.Subject.Term.PreferredTerms.First()
+	fmt.Printf("%s|- %s\n", indent, preferredTerm.TermText)
 	level++
 	for _, child := range node.Children {
 		PrintTree(child, level)

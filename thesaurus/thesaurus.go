@@ -9,19 +9,34 @@ import (
 )
 
 type Thesaurus struct {
-	Subjects []Subject `yaml:"subjects"`
+	Subjects Subjects `yaml:"subjects"`
 }
+
+type Subjects []*Subject
 
 type Subject struct {
 	ParentRelationship struct {
-		PreferredParents    []Term `yaml:"preferredParents"`
-		NonPreferredParents []Term `yaml:"nonPreferredParents"`
+		PreferredParents    Terms `yaml:"preferredParents"`
+		NonPreferredParents Terms `yaml:"nonPreferredParents"`
 	} `yaml:"parentRelationship"`
 	Term struct {
-		PreferredTerms    []Term `yaml:"preferredTerms"`
-		NonPreferredTerms []Term `yaml:"nonPreferredTerms"`
+		PreferredTerms    Terms `yaml:"preferredTerms"`
+		NonPreferredTerms Terms `yaml:"nonPreferredTerms"`
 	} `yaml:"term"`
-	DescriptiveNotes []Note `yaml:"descriptiveNotes"`
+	DescriptiveNotes []*Note `yaml:"descriptiveNotes"`
+}
+
+type Terms []*Term
+
+func (t *Terms) IsEmpty() bool {
+	return len(*t) < 1
+}
+
+func (t *Terms) First() *Term {
+	for _, t := range *t {
+		return t
+	}
+	return nil
 }
 
 type Term struct {
