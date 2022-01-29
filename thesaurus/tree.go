@@ -3,6 +3,7 @@ package thesaurus
 import (
 	"errors"
 	"fmt"
+	"strings"
 )
 
 type Node struct {
@@ -73,15 +74,25 @@ func buildTree(subjects Subjects, table map[string]*Node) (err error) {
 	return buildTree(orphans, table)
 }
 
-func PrintTree(node *Node, level int) {
-	indent := ""
-	for i := 0; i < level; i++ {
-		indent += "  "
-	}
+func PrintGraph(node *Node, level int) (s string) {
 	preferredTerm := node.Subject.Term.PreferredTerms.First()
-	fmt.Printf("%s|- %s\n", indent, preferredTerm.TermText)
+	s += fmt.Sprintf("%s|- %s\n", strings.Repeat("  ", level), preferredTerm.TermText)
 	level++
 	for _, child := range node.Children {
-		PrintTree(child, level)
+		s += PrintGraph(child, level)
 	}
+	return
+}
+
+func PrintJSON(node *Node) (s string) {
+	preferredTerm := node.Subject.Term.PreferredTerms.First()
+	s += fmt.Sprintf("{\"preferredTerms\": [\"%s\"], \"children\": [", preferredTerm.TermText)
+	for i, child := range node.Children {
+		s += PrintJSON(child)
+		if i < len(node.Children)-1 {
+			s += ", "
+		}
+	}
+	s += "]}"
+	return
 }

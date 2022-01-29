@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/memochou1993/thesaurus/thesaurus"
 	"log"
 )
@@ -15,5 +16,6 @@ func main() {
 	if root, err = thesaurus.NewTree(t.Subjects); err != nil {
 		log.Fatal(err)
 	}
-	thesaurus.PrintTree(root, 0)
+	fmt.Println(thesaurus.PrintGraph(root, 0))
+	fmt.Println(thesaurus.PrintJSON(root))
 }
