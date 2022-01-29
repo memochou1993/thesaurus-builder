@@ -86,11 +86,11 @@ func PrintGraph(node *Node, level int) (s string) {
 
 func PrintJSON(node *Node) (s string) {
 	preferredTerm := node.Subject.Term.PreferredTerms.First()
-	s += fmt.Sprintf("{\"preferredTerms\": [\"%s\"], \"children\": [", preferredTerm.TermText)
+	s += fmt.Sprintf("{\"preferredTerms\":[\"%s\"],\"children\":[", preferredTerm.TermText)
 	for i, child := range node.Children {
 		s += PrintJSON(child)
 		if i < len(node.Children)-1 {
-			s += ", "
+			s += ","
 		}
 	}
 	s += "]}"

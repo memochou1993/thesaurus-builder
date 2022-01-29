@@ -61,12 +61,12 @@ func NewThesaurus(filename string) (t *Thesaurus, err error) {
 	return t, nil
 }
 
-func Build(path string) error {
-	b, err := ioutil.ReadFile("template.html")
+func Build(data string, path string) error {
+	b, err := ioutil.ReadFile("template/index.html")
 	if err != nil {
 		return err
 	}
-	s := strings.Replace(string(b), "__BODY__", "hello", 1)
+	s := strings.Replace(string(b), "\"__DATA__\"", data, 1)
 	if _, err = os.Stat(path); os.IsNotExist(err) {
 		if err = os.MkdirAll(path, 0755); err != nil {
 			return err
