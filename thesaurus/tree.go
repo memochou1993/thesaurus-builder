@@ -22,24 +22,30 @@ func NewNode(s Subject) *Node {
 
 func BuildTree(subjects []Subject) (root *Node, err error) {
 	table := make(map[string]*Node, 1024)
-	for _, subject := range subjects {
-		if len(subject.ParentRelationship.PreferredParents) == 0 {
-			if len(subject.Term.PreferredTerms) == 0 {
-				return nil, errors.New("invalid root node")
-			}
-			root = NewNode(subject)
-			table[subject.Term.PreferredTerms[0].TermText] = root
-			break
-		}
+	if root, err = buildRoot(subjects, table); err != nil {
+		return nil, err
 	}
-	if root == nil {
-		return nil, errors.New("invalid root node")
+	if err = buildBranch(subjects, table); err != nil {
+		return nil, err
 	}
-	knit(subjects, table)
 	return root, nil
 }
 
-func knit(subjects []Subject, table map[string]*Node) {
+func buildRoot(subjects []Subject, table map[string]*Node) (root *Node, err error) {
+	for _, subject := range subjects {
+		if len(subject.ParentRelationship.PreferredParents) == 0 {
+			if len(subject.Term.PreferredTerms) == 0 {
+				return nil, errors.New("invalid root")
+			}
+			root = NewNode(subject)
+			table[subject.Term.PreferredTerms[0].TermText] = root
+			return
+		}
+	}
+	return nil, errors.New("root missing")
+}
+
+func buildBranch(subjects []Subject, table map[string]*Node) (err error) {
 	var remaining []Subject
 	for _, subject := range subjects {
 		if len(subject.ParentRelationship.PreferredParents) == 0 {
@@ -56,10 +62,17 @@ func knit(subjects []Subject, table map[string]*Node) {
 		}
 		remaining = append(remaining, subject)
 	}
-	if len(remaining) == len(subjects) || len(remaining) == 0 {
+	if len(remaining) == len(subjects) {
+		if len(remaining) != 0 {
+			for _, subject := range remaining {
+				for _, parent := range subject.ParentRelationship.PreferredParents {
+					return errors.New(fmt.Sprintf("parent missing: %s", parent.TermText))
+				}
+			}
+		}
 		return
 	}
-	knit(remaining, table)
+	return buildBranch(remaining, table)
 }
 
 func PrintTree(node *Node, level int) {
