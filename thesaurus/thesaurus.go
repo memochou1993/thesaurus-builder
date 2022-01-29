@@ -33,8 +33,8 @@ func (t *Terms) IsEmpty() bool {
 }
 
 func (t *Terms) First() *Term {
-	for _, t := range *t {
-		return t
+	for _, term := range *t {
+		return term
 	}
 	return nil
 }
@@ -49,14 +49,14 @@ type Note struct {
 	NoteText string `yaml:"noteText"`
 }
 
-func NewThesaurus(filename string) (*Thesaurus, error) {
-	t := &Thesaurus{}
-	b, err := ioutil.ReadFile(filename)
+func NewThesaurus(filename string) (t *Thesaurus, err error) {
+	var b []byte
+	b, err = ioutil.ReadFile(filename)
 	if err != nil {
-		return nil, err
+		return
 	}
-	if err := yaml.Unmarshal(b, t); err != nil {
-		return nil, err
+	if err = yaml.Unmarshal(b, &t); err != nil {
+		return
 	}
 	return t, nil
 }

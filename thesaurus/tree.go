@@ -10,14 +10,6 @@ type Node struct {
 	Children []*Node
 }
 
-func (n *Node) FirstPreferredParent() *Term {
-	return n.Subject.ParentRelationship.PreferredParents.First()
-}
-
-func (n *Node) FirstPreferredTerm() *Term {
-	return n.Subject.Term.PreferredTerms.First()
-}
-
 func (n *Node) AppendChild(node *Node) {
 	n.Children = append(n.Children, node)
 }
