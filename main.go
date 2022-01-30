@@ -3,7 +3,7 @@ package main
 import (
 	"embed"
 	"fmt"
-	"github.com/memochou1993/thesaurus/thesaurus"
+	"github.com/memochou1993/thesaurus-builder/thesaurus"
 	"log"
 )
 

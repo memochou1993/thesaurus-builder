@@ -1,4 +1,4 @@
-module github.com/memochou1993/thesaurus
+module github.com/memochou1993/thesaurus-builder
 
 go 1.17
 
