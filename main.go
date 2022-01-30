@@ -16,7 +16,8 @@ func main() {
 	if root, err = thesaurus.NewTree(t.Subjects); err != nil {
 		log.Fatal(err)
 	}
-	if err = thesaurus.Build(thesaurus.PrintJSON(root), "dist"); err != nil {
+	config := thesaurus.NewConfig("dist", thesaurus.PrintJSON(root))
+	if err = thesaurus.Build(*config); err != nil {
 		log.Fatal(err)
 	}
 	fmt.Println(thesaurus.PrintGraph(root, 0))

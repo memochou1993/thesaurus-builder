@@ -1,11 +1,8 @@
 package thesaurus
 
 import (
-	"fmt"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
-	"os"
-	"strings"
 )
 
 type Thesaurus struct {
@@ -59,19 +56,4 @@ func NewThesaurus(filename string) (t *Thesaurus, err error) {
 		return
 	}
 	return t, nil
-}
-
-func Build(data string, path string) error {
-	b, err := ioutil.ReadFile("template/index.html")
-	if err != nil {
-		return err
-	}
-	s := strings.Replace(string(b), "\"__DATA__\"", data, 1)
-	if _, err = os.Stat(path); os.IsNotExist(err) {
-		if err = os.MkdirAll(path, 0755); err != nil {
-			return err
-		}
-	}
-	filename := fmt.Sprintf("%s/index.html", path)
-	return ioutil.WriteFile(filename, []byte(s), 0755)
 }

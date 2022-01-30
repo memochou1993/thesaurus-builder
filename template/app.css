@@ -1,0 +1,42 @@
+body {
+  margin: 0;
+}
+
+ul {
+  list-style-type: none;
+  padding-left: 12px;
+}
+ul:first-child {
+  margin: 0;
+  padding: 0;
+}
+
+.subject {
+  margin: 20px 12px;
+}
+
+.title {
+  cursor: pointer;
+}
+.title::before {
+  color: black;
+  content: "\25B6";
+  display: inline-block;
+  margin-right: 8px;
+  transform: scale(.75);
+}
+.title-expanded::before {
+  transform: scale(.75) rotate(90deg);
+}
+
+.note {
+  margin: 4px 0 4px 24px;
+}
+
+.children {
+  display: none;
+}
+
+.active {
+  display: block;
+}
