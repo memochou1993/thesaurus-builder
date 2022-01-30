@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	TemplatePath = "template"
+	TemplatePath = "assets"
 )
 
 type Config struct {
