@@ -21,9 +21,9 @@ func NewNode(subject Subject) *Node {
 	}
 }
 
-func NewTree(subjects Subjects) (root *Node, err error) {
+func NewTree(t *Thesaurus) (root *Node, err error) {
 	table := make(map[string]*Node, 1024)
-	for i, subject := range subjects {
+	for i, subject := range t.Subjects {
 		if subject.Term.PreferredTerms.IsEmpty() {
 			return nil, errors.New(fmt.Sprintf("preferred term missing (subject: #%d)", i+1))
 		}
@@ -41,7 +41,7 @@ func NewTree(subjects Subjects) (root *Node, err error) {
 	if root == nil {
 		return nil, errors.New("root missing")
 	}
-	return root, buildTree(subjects, table)
+	return root, buildTree(t.Subjects, table)
 }
 
 func buildTree(subjects Subjects, table map[string]*Node) (err error) {

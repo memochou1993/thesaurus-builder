@@ -1,31 +1,35 @@
 package main
 
 import (
+	"embed"
 	"fmt"
 	"github.com/memochou1993/thesaurus/thesaurus"
 	"log"
 )
 
 var (
-	config *thesaurus.Config
+	//go:embed assets
+	assets  embed.FS
+	builder *thesaurus.Builder
 )
 
 func init() {
-	thesaurus.ParseFlags(config)
+	builder = thesaurus.NewBuilder()
+	builder.SetAssets(assets)
+	builder.ParseFlags()
 }
 
 func main() {
 	var t *thesaurus.Thesaurus
-	var err error
-	if t, err = thesaurus.NewThesaurus(config.File); err != nil {
-		log.Fatal(err)
-	}
 	var root *thesaurus.Node
-	if root, err = thesaurus.NewTree(t.Subjects); err != nil {
+	var err error
+	if t, err = thesaurus.NewThesaurus(builder.Filename); err != nil {
 		log.Fatal(err)
 	}
-	config.Data = thesaurus.PrintJSON(root)
-	if err = thesaurus.Build(config); err != nil {
+	if root, err = thesaurus.NewTree(t); err != nil {
+		log.Fatal(err)
+	}
+	if err = builder.Build(root); err != nil {
 		log.Fatal(err)
 	}
 	fmt.Println(thesaurus.PrintGraph(root, 0))

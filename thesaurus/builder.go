@@ -1,6 +1,7 @@
 package thesaurus
 
 import (
+	"embed"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -10,81 +11,91 @@ import (
 
 const (
 	TemplatePath = "assets"
+	FlagData     = "\"__DATA__\""
 )
 
-type Config struct {
-	Data      string
-	File      string
+type Builder struct {
+	Assets    embed.FS
+	Filename  string
 	OutputDir string
+	Root      *Node
 }
 
-func ParseFlags(config *Config) {
-	flag.StringVar(&config.File, "f", "thesaurus.yaml", "thesaurus file")
-	flag.StringVar(&config.OutputDir, "o", "dist", "output directory")
+func (b *Builder) SetAssets(assets embed.FS) {
+	b.Assets = assets
+}
+
+func (b *Builder) SetRoot(root *Node) {
+	b.Root = root
+}
+
+func (b *Builder) ParseFlags() {
+	flag.StringVar(&b.Filename, "f", "thesaurus.yaml", "source file")
+	flag.StringVar(&b.OutputDir, "o", "dist", "output directory")
 	flag.Parse()
 }
 
-func Build(config *Config) error {
-	if err := copyHTML(config); err != nil {
+func (b *Builder) Build(root *Node) error {
+	b.SetRoot(root)
+	if err := b.MakeDir(); err != nil {
 		return err
 	}
-	if err := copyCSS(config); err != nil {
+	if err := b.copyHTML(); err != nil {
 		return err
 	}
-	if err := copyJS(config); err != nil {
+	if err := b.copyCSS(); err != nil {
+		return err
+	}
+	if err := b.copyJS(); err != nil {
 		return err
 	}
 	return nil
 }
 
-func copyHTML(config *Config) error {
+func (b *Builder) MakeDir() error {
+	if _, err := os.Stat(b.OutputDir); os.IsNotExist(err) {
+		return os.MkdirAll(b.OutputDir, 0755)
+	}
+	return nil
+}
+
+func (b *Builder) copyHTML() error {
 	filename := "index.html"
-	b, err := ioutil.ReadFile(fmt.Sprintf("%s/%s", TemplatePath, filename))
+	data, err := b.Assets.ReadFile(fmt.Sprintf("%s/%s", TemplatePath, filename))
 	if err != nil {
 		return err
 	}
-	if _, err = os.Stat(config.OutputDir); os.IsNotExist(err) {
-		if err = os.MkdirAll(config.OutputDir, 0755); err != nil {
-			return err
-		}
-	}
-	o := fmt.Sprintf("%s/%s", config.OutputDir, filename)
-	return ioutil.WriteFile(o, b, 0755)
+	o := fmt.Sprintf("%s/%s", b.OutputDir, filename)
+	return ioutil.WriteFile(o, data, 0755)
 }
 
-func copyCSS(config *Config) error {
+func (b *Builder) copyCSS() error {
 	filename := "app.css"
-	b, err := ioutil.ReadFile(fmt.Sprintf("%s/%s", TemplatePath, filename))
+	data, err := b.Assets.ReadFile(fmt.Sprintf("%s/%s", TemplatePath, filename))
 	if err != nil {
 		return err
 	}
-	s := string(b)
+	s := string(data)
 	s = minify(s, []string{"0 ", "px ", "title title-expandable"})
-	if _, err = os.Stat(config.OutputDir); os.IsNotExist(err) {
-		if err = os.MkdirAll(config.OutputDir, 0755); err != nil {
-			return err
-		}
-	}
-	o := fmt.Sprintf("%s/%s", config.OutputDir, filename)
+	o := fmt.Sprintf("%s/%s", b.OutputDir, filename)
 	return ioutil.WriteFile(o, []byte(s), 0755)
 }
 
-func copyJS(config *Config) error {
+func (b *Builder) copyJS() error {
 	filename := "app.js"
-	b, err := ioutil.ReadFile(fmt.Sprintf("%s/%s", TemplatePath, filename))
+	data, err := b.Assets.ReadFile(fmt.Sprintf("%s/%s", TemplatePath, filename))
 	if err != nil {
 		return err
 	}
-	s := string(b)
+	s := string(data)
 	s = minify(s, []string{"const ", "let ", "title title-expandable", "title title-expanded"})
-	s = strings.Replace(s, "\"__DATA__\"", config.Data, 1)
-	if _, err = os.Stat(config.OutputDir); os.IsNotExist(err) {
-		if err = os.MkdirAll(config.OutputDir, 0755); err != nil {
-			return err
-		}
-	}
-	o := fmt.Sprintf("%s/%s", config.OutputDir, filename)
+	s = strings.Replace(s, FlagData, PrintJSON(b.Root), 1)
+	o := fmt.Sprintf("%s/%s", b.OutputDir, filename)
 	return ioutil.WriteFile(o, []byte(s), 0755)
+}
+
+func NewBuilder() *Builder {
+	return &Builder{}
 }
 
 func minify(s string, keywords []string) string {
