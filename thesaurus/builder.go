@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	TemplatePath = "assets"
-	FlagData     = "\"__DATA__\""
+	AssetsPath      = "assets"
+	PlaceholderData = "\"__DATA__\""
 )
 
 type Builder struct {
@@ -61,7 +61,7 @@ func (b *Builder) MakeDir() error {
 
 func (b *Builder) copyHTML() error {
 	filename := "index.html"
-	data, err := b.Assets.ReadFile(fmt.Sprintf("%s/%s", TemplatePath, filename))
+	data, err := b.Assets.ReadFile(fmt.Sprintf("%s/%s", AssetsPath, filename))
 	if err != nil {
 		return err
 	}
@@ -71,7 +71,7 @@ func (b *Builder) copyHTML() error {
 
 func (b *Builder) copyCSS() error {
 	filename := "app.css"
-	data, err := b.Assets.ReadFile(fmt.Sprintf("%s/%s", TemplatePath, filename))
+	data, err := b.Assets.ReadFile(fmt.Sprintf("%s/%s", AssetsPath, filename))
 	if err != nil {
 		return err
 	}
@@ -83,13 +83,13 @@ func (b *Builder) copyCSS() error {
 
 func (b *Builder) copyJS() error {
 	filename := "app.js"
-	data, err := b.Assets.ReadFile(fmt.Sprintf("%s/%s", TemplatePath, filename))
+	data, err := b.Assets.ReadFile(fmt.Sprintf("%s/%s", AssetsPath, filename))
 	if err != nil {
 		return err
 	}
 	s := string(data)
 	s = minify(s, []string{"const ", "let ", "title title-expandable", "title title-expanded"})
-	s = strings.Replace(s, FlagData, PrintJSON(b.Root), 1)
+	s = strings.Replace(s, PlaceholderData, PrintJSON(b.Root), 1)
 	o := fmt.Sprintf("%s/%s", b.OutputDir, filename)
 	return ioutil.WriteFile(o, []byte(s), 0755)
 }
