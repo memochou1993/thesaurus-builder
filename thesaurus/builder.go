@@ -1,6 +1,7 @@
 package thesaurus
 
 import (
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -12,18 +13,18 @@ const (
 )
 
 type Config struct {
-	Data string
-	Path string
+	Data      string
+	File      string
+	OutputDir string
 }
 
-func NewConfig(path string, data string) *Config {
-	return &Config{
-		Data: data,
-		Path: path,
-	}
+func ParseFlags(config *Config) {
+	flag.StringVar(&config.File, "f", "thesaurus.yaml", "thesaurus file")
+	flag.StringVar(&config.OutputDir, "o", "dist", "output directory")
+	flag.Parse()
 }
 
-func Build(config Config) error {
+func Build(config *Config) error {
 	if err := copyHTML(config); err != nil {
 		return err
 	}
@@ -36,57 +37,57 @@ func Build(config Config) error {
 	return nil
 }
 
-func copyHTML(config Config) error {
+func copyHTML(config *Config) error {
 	filename := "index.html"
 	b, err := ioutil.ReadFile(fmt.Sprintf("%s/%s", TemplatePath, filename))
 	if err != nil {
 		return err
 	}
-	if _, err = os.Stat(config.Path); os.IsNotExist(err) {
-		if err = os.MkdirAll(config.Path, 0755); err != nil {
+	if _, err = os.Stat(config.OutputDir); os.IsNotExist(err) {
+		if err = os.MkdirAll(config.OutputDir, 0755); err != nil {
 			return err
 		}
 	}
-	o := fmt.Sprintf("%s/%s", config.Path, filename)
+	o := fmt.Sprintf("%s/%s", config.OutputDir, filename)
 	return ioutil.WriteFile(o, b, 0755)
 }
 
-func copyCSS(config Config) error {
+func copyCSS(config *Config) error {
 	filename := "app.css"
 	b, err := ioutil.ReadFile(fmt.Sprintf("%s/%s", TemplatePath, filename))
 	if err != nil {
 		return err
 	}
 	s := string(b)
-	s = uglify(s, []string{"0 ", "px ", "title title-expandable"})
-	if _, err = os.Stat(config.Path); os.IsNotExist(err) {
-		if err = os.MkdirAll(config.Path, 0755); err != nil {
+	s = minify(s, []string{"0 ", "px ", "title title-expandable"})
+	if _, err = os.Stat(config.OutputDir); os.IsNotExist(err) {
+		if err = os.MkdirAll(config.OutputDir, 0755); err != nil {
 			return err
 		}
 	}
-	o := fmt.Sprintf("%s/%s", config.Path, filename)
+	o := fmt.Sprintf("%s/%s", config.OutputDir, filename)
 	return ioutil.WriteFile(o, []byte(s), 0755)
 }
 
-func copyJS(config Config) error {
+func copyJS(config *Config) error {
 	filename := "app.js"
 	b, err := ioutil.ReadFile(fmt.Sprintf("%s/%s", TemplatePath, filename))
 	if err != nil {
 		return err
 	}
 	s := string(b)
-	s = uglify(s, []string{"const ", "let ", "title title-expandable", "title title-expanded"})
+	s = minify(s, []string{"const ", "let ", "title title-expandable", "title title-expanded"})
 	s = strings.Replace(s, "\"__DATA__\"", config.Data, 1)
-	if _, err = os.Stat(config.Path); os.IsNotExist(err) {
-		if err = os.MkdirAll(config.Path, 0755); err != nil {
+	if _, err = os.Stat(config.OutputDir); os.IsNotExist(err) {
+		if err = os.MkdirAll(config.OutputDir, 0755); err != nil {
 			return err
 		}
 	}
-	o := fmt.Sprintf("%s/%s", config.Path, filename)
+	o := fmt.Sprintf("%s/%s", config.OutputDir, filename)
 	return ioutil.WriteFile(o, []byte(s), 0755)
 }
 
-func uglify(s string, keywords []string) string {
+func minify(s string, keywords []string) string {
 	for _, k := range keywords {
 		s = strings.ReplaceAll(s, k, strings.ReplaceAll(k, " ", "_"))
 	}
