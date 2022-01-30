@@ -4,13 +4,15 @@ const render = (target, item) => {
   const subject = document.createElement('li');
   subject.setAttribute('class','subject');
   target.appendChild(subject);
-  const title = document.createElement('div');
-  title.innerHTML = item.preferredTerms[0];
-  title.setAttribute('class', item.children.length ? 'title title-expandable' : 'title title-expanded');
-  subject.appendChild(title);
-  item.descriptiveNotes.forEach((n) => {
+  item.preferredTerms.forEach((v) => {
+    const title = document.createElement('div');
+    title.innerHTML = v.termText;
+    title.setAttribute('class', item.children.length ? 'title title-expandable' : 'title title-expanded');
+    subject.appendChild(title);
+  });
+  item.descriptiveNotes.forEach((v) => {
     const note = document.createElement('div');
-    note.innerHTML = n.noteText;
+    note.innerHTML = v.noteText;
     note.setAttribute('class', 'note');
     subject.appendChild(note);
   });

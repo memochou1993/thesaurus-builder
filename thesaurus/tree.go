@@ -87,10 +87,17 @@ func PrintGraph(node *Node, level int) (s string) {
 func PrintJSON(node *Node) (s string) {
 	subject := node.Subject
 	s += "{"
-	s += fmt.Sprintf("\"preferredTerms\":[\"%s\"],", subject.Term.PreferredTerms.First().TermText)
+	s += "\"preferredTerms\":["
+	for i, term := range subject.Term.PreferredTerms {
+		s += fmt.Sprintf("{\"termText\":\"%s\"}", term.TermText)
+		if i < len(node.Subject.DescriptiveNotes)-1 {
+			s += ","
+		}
+	}
+	s += "],"
 	s += "\"descriptiveNotes\":["
-	for i, descriptiveNote := range node.Subject.DescriptiveNotes {
-		s += fmt.Sprintf("{\"noteText\":\"%s\"}", descriptiveNote.NoteText)
+	for i, notes := range node.Subject.DescriptiveNotes {
+		s += fmt.Sprintf("{\"noteText\":\"%s\"}", notes.NoteText)
 		if i < len(node.Subject.DescriptiveNotes)-1 {
 			s += ","
 		}
