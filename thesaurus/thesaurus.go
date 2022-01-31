@@ -20,7 +20,9 @@ type Subject struct {
 		PreferredTerms    Terms `yaml:"preferredTerms"`
 		NonPreferredTerms Terms `yaml:"nonPreferredTerms"`
 	} `yaml:"term"`
-	DescriptiveNotes Notes `yaml:"descriptiveNotes"`
+	DescriptiveNote struct {
+		DescriptiveNotes Notes `yaml:"descriptiveNotes"`
+	} `yaml:"descriptiveNote"`
 }
 
 type Terms []*Term

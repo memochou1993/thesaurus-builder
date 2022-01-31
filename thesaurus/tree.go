@@ -89,16 +89,16 @@ func PrintJSON(node *Node) (s string) {
 	s += "{"
 	s += "\"preferredTerms\":["
 	for i, term := range subject.Term.PreferredTerms {
-		s += fmt.Sprintf("{\"termText\":\"%s\"}", term.TermText)
-		if i < len(node.Subject.DescriptiveNotes)-1 {
+		s += fmt.Sprintf("{\"termText\":\"%s\"}", strings.ReplaceAll(term.TermText, "\"", "\\\""))
+		if i < len(node.Subject.DescriptiveNote.DescriptiveNotes)-1 {
 			s += ","
 		}
 	}
 	s += "],"
 	s += "\"descriptiveNotes\":["
-	for i, notes := range node.Subject.DescriptiveNotes {
-		s += fmt.Sprintf("{\"noteText\":\"%s\"}", notes.NoteText)
-		if i < len(node.Subject.DescriptiveNotes)-1 {
+	for i, descriptiveNote := range node.Subject.DescriptiveNote.DescriptiveNotes {
+		s += fmt.Sprintf("{\"noteText\":\"%s\"}", strings.ReplaceAll(descriptiveNote.NoteText, "\"", "\\\""))
+		if i < len(node.Subject.DescriptiveNote.DescriptiveNotes)-1 {
 			s += ","
 		}
 	}
