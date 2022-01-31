@@ -85,24 +85,9 @@ func PrintGraph(node *Node, level int) (s string) {
 }
 
 func PrintJSON(node *Node) (s string) {
-	subject := node.Subject
 	s += "{"
-	s += "\"preferredTerms\":["
-	for i, term := range subject.Term.PreferredTerms {
-		s += fmt.Sprintf("{\"termText\":\"%s\"}", strings.ReplaceAll(term.TermText, "\"", "\\\""))
-		if i < len(node.Subject.DescriptiveNote.DescriptiveNotes)-1 {
-			s += ","
-		}
-	}
-	s += "],"
-	s += "\"descriptiveNotes\":["
-	for i, descriptiveNote := range node.Subject.DescriptiveNote.DescriptiveNotes {
-		s += fmt.Sprintf("{\"noteText\":\"%s\"}", strings.ReplaceAll(descriptiveNote.NoteText, "\"", "\\\""))
-		if i < len(node.Subject.DescriptiveNote.DescriptiveNotes)-1 {
-			s += ","
-		}
-	}
-	s += "],"
+	s += fmt.Sprintf("\"term\":{%s},", buildTermJSON(node))
+	s += fmt.Sprintf("\"note\":{%s},", buildNoteJSON(node))
 	s += "\"children\":["
 	for i, child := range node.Children {
 		s += PrintJSON(child)
@@ -110,6 +95,33 @@ func PrintJSON(node *Node) (s string) {
 			s += ","
 		}
 	}
-	s += "]}"
+	s += "]"
+	s += "}"
+	return
+}
+
+func buildTermJSON(node *Node) (s string) {
+	s = "\"preferredTerms\":["
+	preferredTerms := node.Subject.Term.PreferredTerms
+	for i, term := range preferredTerms {
+		s += fmt.Sprintf("{\"termText\":\"%s\"}", strings.ReplaceAll(term.TermText, "\"", "\\\""))
+		if i < len(preferredTerms)-1 {
+			s += ","
+		}
+	}
+	s += "]"
+	return
+}
+
+func buildNoteJSON(node *Node) (s string) {
+	s = "\"descriptiveNotes\":["
+	descriptiveNotes := node.Subject.Note.DescriptiveNotes
+	for i, descriptiveNote := range descriptiveNotes {
+		s += fmt.Sprintf("{\"noteText\":\"%s\"}", strings.ReplaceAll(descriptiveNote.NoteText, "\"", "\\\""))
+		if i < len(descriptiveNotes)-1 {
+			s += ","
+		}
+	}
+	s += "]"
 	return
 }

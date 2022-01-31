@@ -75,8 +75,9 @@ func (b *Builder) copyCSS() error {
 	if err != nil {
 		return err
 	}
+	protectedKeywords := []string{"0 ", "px ", "title title-expandable"}
 	s := string(data)
-	s = minify(s, []string{"0 ", "px ", "title title-expandable"})
+	s = minify(s, protectedKeywords)
 	o := fmt.Sprintf("%s/%s", b.OutputDir, filename)
 	return ioutil.WriteFile(o, []byte(s), 0755)
 }
@@ -87,8 +88,9 @@ func (b *Builder) copyJS() error {
 	if err != nil {
 		return err
 	}
+	protectedKeywords := []string{"const ", "let ", "title title-expandable", "title title-expanded"}
 	s := string(data)
-	s = minify(s, []string{"const ", "let ", "title title-expandable", "title title-expanded"})
+	s = minify(s, protectedKeywords)
 	s = strings.Replace(s, PlaceholderData, PrintJSON(b.Root), 1)
 	o := fmt.Sprintf("%s/%s", b.OutputDir, filename)
 	return ioutil.WriteFile(o, []byte(s), 0755)

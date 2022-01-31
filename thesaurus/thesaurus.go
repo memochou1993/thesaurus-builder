@@ -12,17 +12,17 @@ type Thesaurus struct {
 type Subjects []*Subject
 
 type Subject struct {
-	ParentRelationship struct {
-		PreferredParents    Terms `yaml:"preferredParents"`
-		NonPreferredParents Terms `yaml:"nonPreferredParents"`
-	} `yaml:"parentRelationship"`
 	Term struct {
 		PreferredTerms    Terms `yaml:"preferredTerms"`
 		NonPreferredTerms Terms `yaml:"nonPreferredTerms"`
 	} `yaml:"term"`
-	DescriptiveNote struct {
+	ParentRelationship struct {
+		PreferredParents    Terms `yaml:"preferredParents"`
+		NonPreferredParents Terms `yaml:"nonPreferredParents"`
+	} `yaml:"parentRelationship"`
+	Note struct {
 		DescriptiveNotes Notes `yaml:"descriptiveNotes"`
-	} `yaml:"descriptiveNote"`
+	} `yaml:"note"`
 }
 
 type Terms []*Term
