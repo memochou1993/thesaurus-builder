@@ -1,18 +1,18 @@
+body {
+  margin: 0;
+}
+
 #title {
-  margin: 20px 12px;
+  margin: 20px 12px 20px 24px;
 }
 
 ul {
   list-style-type: none;
-  padding-left: 12px;
-}
-ul:first-child {
-  margin: 0;
   padding: 0;
 }
 
 .subject {
-  margin: 20px 12px;
+  margin: 20px 12px 20px 24px;
 }
 
 .term {
@@ -22,7 +22,7 @@ ul:first-child {
   color: black;
   content: "\25B6";
   display: inline-block;
-  margin-right: 8px;
+  margin-right: calc(8px * .75);
   transform: scale(.75);
 }
 .term-expanded::before {
