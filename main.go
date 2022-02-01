@@ -2,8 +2,11 @@ package main
 
 import (
 	"embed"
+	"flag"
+	"fmt"
 	"github.com/memochou1993/thesaurus-builder/thesaurus"
 	"log"
+	"os"
 )
 
 var (
@@ -13,6 +16,7 @@ var (
 )
 
 func init() {
+	flag.Usage = usage
 	builder = thesaurus.NewBuilder()
 	builder.SetAssets(assets)
 	builder.ParseFlags()
@@ -31,4 +35,11 @@ func main() {
 	if err = builder.Build(root); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func usage() {
+	if _, err := fmt.Fprintln(os.Stderr, "Usage: tb [flags]"); err != nil {
+		log.Fatal(err)
+	}
+	flag.PrintDefaults()
 }

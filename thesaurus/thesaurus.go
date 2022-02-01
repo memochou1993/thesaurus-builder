@@ -50,13 +50,13 @@ type Note struct {
 
 func NewThesaurus(filename string) (t *Thesaurus, err error) {
 	bar := NewProgressBar(100000, "1/3", "Unmarshalling thesaurus file...")
-	go StartPermanentProgress(bar)
-	defer FinishPermanentProgress(bar)
 	var b []byte
 	b, err = ioutil.ReadFile(filename)
 	if err != nil {
 		return
 	}
+	go StartPermanentProgress(bar)
+	defer FinishPermanentProgress(bar)
 	if err = yaml.Unmarshal(b, &t); err != nil {
 		return
 	}
