@@ -9,6 +9,33 @@ import (
 	"strings"
 )
 
+type Tree struct {
+	Title string `json:"title"`
+	Root  *Node  `json:"root"`
+}
+
+func (t *Tree) ToJSON() string {
+	b, err := json.Marshal(t)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return string(b)
+}
+
+func (t *Tree) ToGraph(node *Node, level int) (s string) {
+	if level == 0 {
+		s = t.Title
+		level++
+	}
+	preferredTerm := node.Subject.Term.PreferredTerms.First()
+	s += fmt.Sprintf("\n%s|- %s", strings.Repeat("  ", level), preferredTerm.TermText)
+	level++
+	for _, child := range node.Children {
+		s += t.ToGraph(child, level)
+	}
+	return
+}
+
 type Node struct {
 	Subject  Subject `json:"subject"`
 	Children []*Node `json:"children,omitempty"`
@@ -18,48 +45,29 @@ func (n *Node) AppendChild(node *Node) {
 	n.Children = append(n.Children, node)
 }
 
-func (n *Node) ToJSON() string {
-	b, err := json.Marshal(n)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return string(b)
-}
-
-func (n *Node) ToGraph(level int) (s string) {
-	if level == 0 {
-		s = "\nThesaurus Tree"
-		level++
-	}
-	preferredTerm := n.Subject.Term.PreferredTerms.First()
-	s += fmt.Sprintf("\n%s|- %s", strings.Repeat("  ", level), preferredTerm.TermText)
-	level++
-	for _, child := range n.Children {
-		s += child.ToGraph(level)
-	}
-	return
-}
-
 func NewNode(subject Subject) *Node {
 	return &Node{
 		Subject: subject,
 	}
 }
 
-func NewTree(t *Thesaurus) (root *Node, err error) {
-	bar := NewProgressBar(len(t.Subjects), "2/3", "Building thesaurus tree...")
-	table := make(map[string]*Node, len(t.Subjects))
-	for i, subject := range t.Subjects {
+func NewTree(source *Source) (thesaurus *Tree, err error) {
+	bar := NewProgressBar(len(source.Subjects), "2/3", "Building thesaurus tree...")
+	thesaurus = &Tree{
+		Title: source.Title,
+	}
+	table := make(map[string]*Node, len(source.Subjects))
+	for i, subject := range source.Subjects {
 		if subject.Term.PreferredTerms.IsEmpty() {
 			return nil, errors.New(fmt.Sprintf("preferred term missing (subject: #%d)", i+1))
 		}
 		preferredTerm := subject.Term.PreferredTerms.First()
 		if subject.ParentRelationship.PreferredParents.IsEmpty() {
-			if root != nil {
+			if thesaurus.Root != nil {
 				return nil, errors.New(fmt.Sprintf("preferred parent missing (subject: \"%s\")", preferredTerm.TermText))
 			}
-			root = NewNode(*subject)
-			table[preferredTerm.TermText] = root
+			thesaurus.Root = NewNode(*subject)
+			table[preferredTerm.TermText] = thesaurus.Root
 			if err := bar.Add(1); err != nil {
 				return nil, err
 			}
@@ -67,10 +75,10 @@ func NewTree(t *Thesaurus) (root *Node, err error) {
 		}
 		table[preferredTerm.TermText] = nil
 	}
-	if root == nil {
+	if thesaurus.Root == nil {
 		return nil, errors.New("root missing")
 	}
-	return root, buildTree(t.Subjects, table, bar)
+	return thesaurus, buildTree(source.Subjects, table, bar)
 }
 
 func buildTree(subjects Subjects, table map[string]*Node, bar *progressbar.ProgressBar) (err error) {

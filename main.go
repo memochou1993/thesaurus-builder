@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"fmt"
 	"github.com/memochou1993/thesaurus-builder/thesaurus"
 	"log"
 )
@@ -19,16 +20,17 @@ func init() {
 }
 
 func main() {
-	var t *thesaurus.Thesaurus
-	var root *thesaurus.Node
+	var s *thesaurus.Source
+	var t *thesaurus.Tree
 	var err error
-	if t, err = thesaurus.NewThesaurus(builder.Filename); err != nil {
+	if s, err = thesaurus.NewSource(builder.Filename); err != nil {
 		log.Fatal(err)
 	}
-	if root, err = thesaurus.NewTree(t); err != nil {
+	if t, err = thesaurus.NewTree(s); err != nil {
 		log.Fatal(err)
 	}
-	if err = builder.Build(root); err != nil {
+	if err = builder.Build(t); err != nil {
 		log.Fatal(err)
 	}
+	fmt.Println(t.ToGraph(t.Root, 0))
 }

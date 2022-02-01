@@ -17,15 +17,15 @@ type Builder struct {
 	Assets    embed.FS
 	Filename  string
 	OutputDir string
-	Root      *Node
+	Thesaurus *Tree
 }
 
-func (b *Builder) SetAssets(assets embed.FS) {
-	b.Assets = assets
+func (b *Builder) SetAssets(a embed.FS) {
+	b.Assets = a
 }
 
-func (b *Builder) SetRoot(root *Node) {
-	b.Root = root
+func (b *Builder) SetThesaurus(t *Tree) {
+	b.Thesaurus = t
 }
 
 func (b *Builder) InitFlags() {
@@ -38,11 +38,11 @@ func (b *Builder) InitFlags() {
 	flag.Parse()
 }
 
-func (b *Builder) Build(root *Node) error {
+func (b *Builder) Build(t *Tree) error {
 	bar := NewProgressBar(10000, "3/3", "Generating thesaurus assets...")
 	go StartPermanentProgress(bar)
 	defer FinishPermanentProgress(bar)
-	b.SetRoot(root)
+	b.SetThesaurus(t)
 	if err := b.makeDir(); err != nil {
 		return err
 	}
@@ -84,7 +84,7 @@ func (b *Builder) copyCSS() error {
 	if err != nil {
 		return err
 	}
-	protectedKeywords := []string{"0 ", "px ", "title title-expandable"}
+	protectedKeywords := []string{"0 ", "px ", "term term-expandable"}
 	s := string(data)
 	s = minify(s, protectedKeywords)
 	o := fmt.Sprintf("%s/%s", b.OutputDir, filename)
@@ -97,7 +97,7 @@ func (b *Builder) copyJS() error {
 	if err != nil {
 		return err
 	}
-	protectedKeywords := []string{"async ", "await ", "const ", "let ", "title title-expandable", "title title-expanded"}
+	protectedKeywords := []string{"async ", "await ", "const ", "let ", "term term-expandable", "term term-expanded"}
 	s := string(data)
 	s = minify(s, protectedKeywords)
 	o := fmt.Sprintf("%s/%s", b.OutputDir, filename)
@@ -107,7 +107,7 @@ func (b *Builder) copyJS() error {
 func (b *Builder) copyJSON() error {
 	filename := "data.json"
 	o := fmt.Sprintf("%s/%s", b.OutputDir, filename)
-	return ioutil.WriteFile(o, []byte(b.Root.ToJSON()), 0755)
+	return ioutil.WriteFile(o, []byte(b.Thesaurus.ToJSON()), 0755)
 }
 
 func NewBuilder() *Builder {

@@ -1,5 +1,5 @@
-body {
-  margin: 0;
+#title {
+  margin: 20px 12px;
 }
 
 ul {
@@ -15,17 +15,17 @@ ul:first-child {
   margin: 20px 12px;
 }
 
-.title {
+.term {
   cursor: pointer;
 }
-.title::before {
+.term::before {
   color: black;
   content: "\25B6";
   display: inline-block;
   margin-right: 8px;
   transform: scale(.75);
 }
-.title-expanded::before {
+.term-expanded::before {
   transform: scale(.75) rotate(90deg);
 }
 

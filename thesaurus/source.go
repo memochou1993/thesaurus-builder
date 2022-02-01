@@ -5,7 +5,8 @@ import (
 	"io/ioutil"
 )
 
-type Thesaurus struct {
+type Source struct {
+	Title    string   `json:"title" yaml:"title"`
 	Subjects Subjects `json:"subjects" yaml:"subjects"`
 }
 
@@ -48,7 +49,7 @@ type Note struct {
 	NoteText string `json:"noteText" yaml:"noteText"`
 }
 
-func NewThesaurus(filename string) (t *Thesaurus, err error) {
+func NewSource(filename string) (t *Source, err error) {
 	bar := NewProgressBar(100000, "1/3", "Unmarshalling thesaurus file...")
 	var b []byte
 	b, err = ioutil.ReadFile(filename)
