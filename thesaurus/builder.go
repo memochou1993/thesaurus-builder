@@ -40,7 +40,7 @@ func (b *Builder) Build(root *Node) error {
 	go StartPermanentProgress(bar)
 	defer FinishPermanentProgress(bar)
 	b.SetRoot(root)
-	if err := b.MakeDir(); err != nil {
+	if err := b.makeDir(); err != nil {
 		return err
 	}
 	if err := b.copyHTML(); err != nil {
@@ -52,10 +52,13 @@ func (b *Builder) Build(root *Node) error {
 	if err := b.copyJS(); err != nil {
 		return err
 	}
+	if err := b.copyJSON(); err != nil {
+		return err
+	}
 	return nil
 }
 
-func (b *Builder) MakeDir() error {
+func (b *Builder) makeDir() error {
 	if _, err := os.Stat(b.OutputDir); os.IsNotExist(err) {
 		return os.MkdirAll(b.OutputDir, 0755)
 	}
@@ -91,24 +94,29 @@ func (b *Builder) copyJS() error {
 	if err != nil {
 		return err
 	}
-	protectedKeywords := []string{"const ", "let ", "title title-expandable", "title title-expanded"}
+	protectedKeywords := []string{"async ", "await ", "const ", "let ", "title title-expandable", "title title-expanded"}
 	s := string(data)
 	s = minify(s, protectedKeywords)
-	s = strings.Replace(s, PlaceholderData, b.Root.ToJSON(), 1)
 	o := fmt.Sprintf("%s/%s", b.OutputDir, filename)
 	return ioutil.WriteFile(o, []byte(s), 0755)
+}
+
+func (b *Builder) copyJSON() error {
+	filename := "data.json"
+	o := fmt.Sprintf("%s/%s", b.OutputDir, filename)
+	return ioutil.WriteFile(o, []byte(b.Root.ToJSON()), 0755)
 }
 
 func NewBuilder() *Builder {
 	return &Builder{}
 }
 
-func minify(s string, keywords []string) string {
-	for _, k := range keywords {
+func minify(s string, protectedKeywords []string) string {
+	for _, k := range protectedKeywords {
 		s = strings.ReplaceAll(s, k, strings.ReplaceAll(k, " ", "_"))
 	}
 	s = strings.ReplaceAll(s, " ", "")
-	for _, k := range keywords {
+	for _, k := range protectedKeywords {
 		s = strings.ReplaceAll(s, strings.ReplaceAll(k, " ", "_"), k)
 	}
 	s = strings.ReplaceAll(s, "\n", "")
