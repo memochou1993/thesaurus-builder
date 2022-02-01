@@ -30,7 +30,7 @@ func (b *Builder) SetRoot(root *Node) {
 
 func (b *Builder) InitFlags() {
 	flag.Usage = func() {
-		fmt.Fprintln(os.Stderr, "Usage: tb [flags]")
+		_, _ = fmt.Fprintln(os.Stderr, "Usage: tb [flags]")
 		flag.PrintDefaults()
 	}
 	flag.StringVar(&b.Filename, "f", "thesaurus.yaml", "source file")

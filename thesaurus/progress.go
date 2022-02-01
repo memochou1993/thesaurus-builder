@@ -23,7 +23,7 @@ func NewProgressBar(max int, step string, description string) *progressbar.Progr
 		progressbar.OptionSetPredictTime(false),
 		progressbar.OptionSetTheme(theme),
 		progressbar.OptionOnCompletion(func() {
-			fmt.Fprintln(os.Stdout)
+			_, _ = fmt.Fprintln(os.Stdout)
 		}),
 	}
 	return progressbar.NewOptions(max, options...)
