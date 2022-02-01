@@ -84,7 +84,7 @@ func (b *Builder) copyCSS() error {
 	if err != nil {
 		return err
 	}
-	protectedKeywords := []string{"0 ", "px ", "term term-expandable"}
+	protectedKeywords := []string{"0 ", "px "}
 	s := string(data)
 	s = minify(s, protectedKeywords)
 	o := fmt.Sprintf("%s/%s", b.OutputDir, filename)
