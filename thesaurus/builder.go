@@ -4,6 +4,7 @@ import (
 	"embed"
 	"flag"
 	"fmt"
+	"github.com/memochou1993/thesaurus-builder/helper"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -39,9 +40,9 @@ func (b *Builder) InitFlags() {
 }
 
 func (b *Builder) Build(t *Tree) error {
-	bar := NewProgressBar(10000, "3/3", "Generating thesaurus assets...")
-	go StartPermanentProgress(bar)
-	defer FinishPermanentProgress(bar)
+	bar := helper.NewProgressBar(10000, "3/3", "Generating thesaurus assets...")
+	go helper.StartPermanentProgress(bar)
+	defer helper.FinishPermanentProgress(bar)
 	b.SetThesaurus(t)
 	if err := b.makeDir(); err != nil {
 		return err

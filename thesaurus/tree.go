@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/memochou1993/thesaurus-builder/helper"
 	"github.com/schollz/progressbar/v3"
 	"log"
 	"strings"
@@ -52,7 +53,7 @@ func NewNode(subject Subject) *Node {
 }
 
 func NewTree(source *Source) (thesaurus *Tree, err error) {
-	bar := NewProgressBar(len(source.Subjects), "2/3", "Building thesaurus tree...")
+	bar := helper.NewProgressBar(len(source.Subjects), "2/3", "Building thesaurus tree...")
 	thesaurus = &Tree{
 		Title: source.Title,
 	}

@@ -1,4 +1,4 @@
-package thesaurus
+package helper
 
 import (
 	"fmt"

@@ -1,6 +1,7 @@
 package thesaurus
 
 import (
+	"github.com/memochou1993/thesaurus-builder/helper"
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
 )
@@ -50,14 +51,14 @@ type Note struct {
 }
 
 func NewSource(filename string) (t *Source, err error) {
-	bar := NewProgressBar(100000, "1/3", "Unmarshalling thesaurus file...")
+	bar := helper.NewProgressBar(100000, "1/3", "Unmarshalling thesaurus file...")
 	var b []byte
 	b, err = ioutil.ReadFile(filename)
 	if err != nil {
 		return
 	}
-	go StartPermanentProgress(bar)
-	defer FinishPermanentProgress(bar)
+	go helper.StartPermanentProgress(bar)
+	defer helper.FinishPermanentProgress(bar)
 	if err = yaml.Unmarshal(b, &t); err != nil {
 		return
 	}
