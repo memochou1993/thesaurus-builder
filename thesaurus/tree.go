@@ -1,19 +1,43 @@
 package thesaurus
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/schollz/progressbar/v3"
+	"log"
 	"strings"
 )
 
 type Node struct {
-	Subject  Subject
-	Children []*Node
+	Subject  Subject `json:"subject"`
+	Children []*Node `json:"children,omitempty"`
 }
 
 func (n *Node) AppendChild(node *Node) {
 	n.Children = append(n.Children, node)
+}
+
+func (n *Node) ToJSON() string {
+	b, err := json.Marshal(n)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return string(b)
+}
+
+func (n *Node) ToGraph(level int) (s string) {
+	if level == 0 {
+		s = "\nThesaurus Tree"
+		level++
+	}
+	preferredTerm := n.Subject.Term.PreferredTerms.First()
+	s += fmt.Sprintf("\n%s|- %s", strings.Repeat("  ", level), preferredTerm.TermText)
+	level++
+	for _, child := range n.Children {
+		s += child.ToGraph(level)
+	}
+	return
 }
 
 func NewNode(subject Subject) *Node {
@@ -80,60 +104,4 @@ func buildTree(subjects Subjects, table map[string]*Node, bar *progressbar.Progr
 		return
 	}
 	return buildTree(orphans, table, bar)
-}
-
-func PrintGraph(node *Node, level int) (s string) {
-	if level == 0 {
-		s = "\nThesaurus Tree"
-		level++
-	}
-	preferredTerm := node.Subject.Term.PreferredTerms.First()
-	s += fmt.Sprintf("\n%s|- %s", strings.Repeat("  ", level), preferredTerm.TermText)
-	level++
-	for _, child := range node.Children {
-		s += PrintGraph(child, level)
-	}
-	return
-}
-
-func PrintJSON(node *Node) (s string) {
-	s += "{"
-	s += fmt.Sprintf("\"term\":{%s},", buildTermJSON(node))
-	s += fmt.Sprintf("\"note\":{%s},", buildNoteJSON(node))
-	s += "\"children\":["
-	for i, child := range node.Children {
-		s += PrintJSON(child)
-		if i < len(node.Children)-1 {
-			s += ","
-		}
-	}
-	s += "]"
-	s += "}"
-	return
-}
-
-func buildTermJSON(node *Node) (s string) {
-	s = "\"preferredTerms\":["
-	preferredTerms := node.Subject.Term.PreferredTerms
-	for i, term := range preferredTerms {
-		s += fmt.Sprintf("{\"termText\":\"%s\"}", strings.ReplaceAll(term.TermText, "\"", "\\\""))
-		if i < len(preferredTerms)-1 {
-			s += ","
-		}
-	}
-	s += "]"
-	return
-}
-
-func buildNoteJSON(node *Node) (s string) {
-	s = "\"descriptiveNotes\":["
-	descriptiveNotes := node.Subject.Note.DescriptiveNotes
-	for i, descriptiveNote := range descriptiveNotes {
-		s += fmt.Sprintf("{\"noteText\":\"%s\"}", strings.ReplaceAll(descriptiveNote.NoteText, "\"", "\\\""))
-		if i < len(descriptiveNotes)-1 {
-			s += ","
-		}
-	}
-	s += "]"
-	return
 }

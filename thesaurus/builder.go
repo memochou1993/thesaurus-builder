@@ -94,7 +94,7 @@ func (b *Builder) copyJS() error {
 	protectedKeywords := []string{"const ", "let ", "title title-expandable", "title title-expanded"}
 	s := string(data)
 	s = minify(s, protectedKeywords)
-	s = strings.Replace(s, PlaceholderData, PrintJSON(b.Root), 1)
+	s = strings.Replace(s, PlaceholderData, b.Root.ToJSON(), 1)
 	o := fmt.Sprintf("%s/%s", b.OutputDir, filename)
 	return ioutil.WriteFile(o, []byte(s), 0755)
 }

@@ -6,23 +6,23 @@ import (
 )
 
 type Thesaurus struct {
-	Subjects Subjects `yaml:"subjects"`
+	Subjects Subjects `json:"subjects" yaml:"subjects"`
 }
 
 type Subjects []*Subject
 
 type Subject struct {
 	Term struct {
-		PreferredTerms    Terms `yaml:"preferredTerms"`
-		NonPreferredTerms Terms `yaml:"nonPreferredTerms"`
-	} `yaml:"term"`
+		PreferredTerms    Terms `json:"preferredTerms" yaml:"preferredTerms"`
+		NonPreferredTerms Terms `json:"nonPreferredTerms,omitempty" yaml:"nonPreferredTerms"`
+	} `json:"term" yaml:"term"`
 	ParentRelationship struct {
-		PreferredParents    Terms `yaml:"preferredParents"`
-		NonPreferredParents Terms `yaml:"nonPreferredParents"`
-	} `yaml:"parentRelationship"`
+		PreferredParents    Terms `json:"preferredParents" yaml:"preferredParents"`
+		NonPreferredParents Terms `json:"nonPreferredParents,omitempty" yaml:"nonPreferredParents"`
+	} `json:"parentRelationship" yaml:"parentRelationship"`
 	Note struct {
-		DescriptiveNotes Notes `yaml:"descriptiveNotes"`
-	} `yaml:"note"`
+		DescriptiveNotes Notes `json:"descriptiveNotes,omitempty" yaml:"descriptiveNotes"`
+	} `json:"note" yaml:"note"`
 }
 
 type Terms []*Term
@@ -39,13 +39,13 @@ func (t *Terms) First() *Term {
 }
 
 type Term struct {
-	TermText string `yaml:"termText"`
+	TermText string `json:"termText" yaml:"termText"`
 }
 
 type Notes []*Note
 
 type Note struct {
-	NoteText string `yaml:"noteText"`
+	NoteText string `json:"noteText" yaml:"noteText"`
 }
 
 func NewThesaurus(filename string) (t *Thesaurus, err error) {
