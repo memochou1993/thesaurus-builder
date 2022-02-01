@@ -2,7 +2,6 @@ package main
 
 import (
 	"embed"
-	"fmt"
 	"github.com/memochou1993/thesaurus-builder/thesaurus"
 	"log"
 )
@@ -32,5 +31,4 @@ func main() {
 	if err = builder.Build(root); err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(thesaurus.PrintGraph(root, 0))
 }

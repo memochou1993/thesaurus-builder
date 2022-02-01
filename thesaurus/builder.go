@@ -36,6 +36,9 @@ func (b *Builder) ParseFlags() {
 }
 
 func (b *Builder) Build(root *Node) error {
+	bar := NewProgressBar(10000, "3/3", "Generating thesaurus assets...")
+	go StartPermanentProgress(bar)
+	defer FinishPermanentProgress(bar)
 	b.SetRoot(root)
 	if err := b.MakeDir(); err != nil {
 		return err

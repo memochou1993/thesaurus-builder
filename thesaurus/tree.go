@@ -3,6 +3,7 @@ package thesaurus
 import (
 	"errors"
 	"fmt"
+	"github.com/schollz/progressbar/v3"
 	"strings"
 )
 
@@ -22,7 +23,8 @@ func NewNode(subject Subject) *Node {
 }
 
 func NewTree(t *Thesaurus) (root *Node, err error) {
-	table := make(map[string]*Node, 1024)
+	bar := NewProgressBar(len(t.Subjects), "2/3", "Building thesaurus tree...")
+	table := make(map[string]*Node, len(t.Subjects))
 	for i, subject := range t.Subjects {
 		if subject.Term.PreferredTerms.IsEmpty() {
 			return nil, errors.New(fmt.Sprintf("preferred term missing (subject: #%d)", i+1))
@@ -34,6 +36,9 @@ func NewTree(t *Thesaurus) (root *Node, err error) {
 			}
 			root = NewNode(*subject)
 			table[preferredTerm.TermText] = root
+			if err := bar.Add(1); err != nil {
+				return nil, err
+			}
 			continue
 		}
 		table[preferredTerm.TermText] = nil
@@ -41,10 +46,10 @@ func NewTree(t *Thesaurus) (root *Node, err error) {
 	if root == nil {
 		return nil, errors.New("root missing")
 	}
-	return root, buildTree(t.Subjects, table)
+	return root, buildTree(t.Subjects, table, bar)
 }
 
-func buildTree(subjects Subjects, table map[string]*Node) (err error) {
+func buildTree(subjects Subjects, table map[string]*Node, bar *progressbar.ProgressBar) (err error) {
 	var orphans Subjects
 	for i, subject := range subjects {
 		if subject.ParentRelationship.PreferredParents.IsEmpty() {
@@ -64,6 +69,9 @@ func buildTree(subjects Subjects, table map[string]*Node) (err error) {
 			parent.AppendChild(child)
 			preferredTerm := subject.Term.PreferredTerms.First()
 			table[preferredTerm.TermText] = child
+			if err := bar.Add(1); err != nil {
+				return err
+			}
 			continue
 		}
 		orphans = append(orphans, subject)
@@ -71,12 +79,16 @@ func buildTree(subjects Subjects, table map[string]*Node) (err error) {
 	if len(orphans) == len(subjects) {
 		return
 	}
-	return buildTree(orphans, table)
+	return buildTree(orphans, table, bar)
 }
 
 func PrintGraph(node *Node, level int) (s string) {
+	if level == 0 {
+		s = "\nThesaurus Tree"
+		level++
+	}
 	preferredTerm := node.Subject.Term.PreferredTerms.First()
-	s += fmt.Sprintf("%s|- %s\n", strings.Repeat("  ", level), preferredTerm.TermText)
+	s += fmt.Sprintf("\n%s|- %s", strings.Repeat("  ", level), preferredTerm.TermText)
 	level++
 	for _, child := range node.Children {
 		s += PrintGraph(child, level)
