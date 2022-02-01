@@ -1,5 +1,5 @@
 (async () => {
-  const list = document.createElement('ul');
+  const list = document.querySelector('#list');
   const data = await fetch('data.json').then((r) => r.json());
   const render = (target, root) => {
     const subject = document.createElement('li');
@@ -24,14 +24,13 @@
   };
   render(list, data.root);
 
-  document.querySelector('#title').innerHTML = data.title;
-  document.querySelector('#list').innerHTML = list.innerHTML;
-
-  const terms = document.getElementsByClassName('term-expandable');
-  for (let i = 0; i < terms.length; i++) {
-    terms[i].addEventListener('click', (e) => {
+  list.addEventListener('click', (e) => {
+    if (e.target.classList.contains('term-expandable')) {
       e.target.parentElement.querySelector('.children').classList.toggle('active');
       e.target.classList.toggle('term-expanded');
-    });
-  }
+    }
+  });
+
+  const title = document.querySelector('#title');
+  title.innerHTML = data.title;
 })();
