@@ -10,8 +10,7 @@ import (
 )
 
 const (
-	AssetsPath      = "assets"
-	PlaceholderData = "\"__DATA__\""
+	AssetsPath = "assets"
 )
 
 type Builder struct {
@@ -29,7 +28,11 @@ func (b *Builder) SetRoot(root *Node) {
 	b.Root = root
 }
 
-func (b *Builder) ParseFlags() {
+func (b *Builder) InitFlags() {
+	flag.Usage = func() {
+		fmt.Fprintln(os.Stderr, "Usage: tb [flags]")
+		flag.PrintDefaults()
+	}
 	flag.StringVar(&b.Filename, "f", "thesaurus.yaml", "source file")
 	flag.StringVar(&b.OutputDir, "o", "dist", "output directory")
 	flag.Parse()
