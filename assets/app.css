@@ -1,22 +1,16 @@
 body {
   margin: 0;
 }
-
 #title {
-  margin: 20px 12px 20px 24px;
+  margin: 20px 24px;
 }
-
 ul {
   list-style-type: none;
+  margin: 0;
   padding: 0;
 }
-
-.subject {
+li {
   margin: 20px 12px 20px 24px;
-}
-
-.term {
-  cursor: pointer;
 }
 .term::before {
   color: black;
@@ -28,15 +22,18 @@ ul {
 .term-expanded::before {
   transform: scale(.75) rotate(90deg);
 }
-
-.note {
-  margin: 4px 0 4px 24px;
+.term-expandable {
+  cursor: pointer;
 }
-
+.note {
+  margin-left: 24px;
+}
+.descriptive-note {
+  margin: 8px 0;
+}
 .children {
   display: none;
 }
-
 .active {
   display: block;
 }

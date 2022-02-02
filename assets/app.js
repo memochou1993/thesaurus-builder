@@ -1,3 +1,6 @@
+const subjectTemplate = document.querySelector('[data-subject-template]');
+const noteTemplate = document.querySelector('[data-descriptive-note-template]');
+
 /**
  * @param {HTMLElement} target
  * @param {Object} prop
@@ -11,9 +14,7 @@
  * @param {Array}  prop.children
  */
 const render = (target, prop) => {
-  const template = document.querySelector('[data-subject-template]');
-  const noteTemplate = document.querySelector('[data-descriptive-note-template]');
-  const [subject] = template.content.cloneNode(true).children;
+  const [subject] = subjectTemplate.content.cloneNode(true).children;
   const [term, note, children] = subject.children;
   const [descriptiveNotes] = note.children;
   prop.subject.term.preferredTerms.forEach((item) => {
