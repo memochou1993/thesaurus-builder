@@ -1,3 +1,5 @@
+const app = document.querySelector('#app');
+const spinner = document.querySelector('#spinner');
 const title = document.querySelector('#title');
 const root = document.querySelector('#root');
 const subjectTemplate = document.querySelector('[data-subject-template]');
@@ -39,12 +41,15 @@ const render = (target, prop) => {
   const data = await fetch('data.json').then((r) => r.json());
   title.textContent = data.title;
   render(root, data.root);
-  document.body.hidden = false;
+  await new Promise((res) => setTimeout(() => res(), 1000));
+  spinner.classList.toggle('hidden');
+  document.documentElement.classList.remove('full-height');
+  app.classList.toggle('hidden');
 })();
 
 root.addEventListener('click', (e) => {
   if (e.target.classList.contains('term-expandable')) {
-    e.target.parentElement.querySelector('.children').classList.toggle('active');
+    e.target.parentElement.querySelector('.children').classList.toggle('hidden');
     e.target.classList.toggle('term-expanded');
   }
 });

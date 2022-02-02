@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="full-height">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,17 +8,20 @@
     <link rel="stylesheet" href="style.css">
     <script src="main.js" defer></script>
 </head>
-<body hidden>
-    <h1 id="title"></h1>
-    <hr>
-    <ul id="root"></ul>
+<body>
+    <div id="spinner"></div>
+    <div id="app" class="hidden">
+        <h1 id="title"></h1>
+        <hr>
+        <ul id="root"></ul>
+    </div>
     <template data-subject-template>
         <li class="subject">
             <div class="term"></div>
             <div class="note">
                 <div class="descriptive-notes"></div>
             </div>
-            <ul class="children"></ul>
+            <ul class="children hidden"></ul>
         </li>
     </template>
     <template data-descriptive-note-template>

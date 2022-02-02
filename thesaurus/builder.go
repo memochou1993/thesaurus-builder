@@ -102,8 +102,7 @@ func (b *Builder) writeCSS() error {
 	if err != nil {
 		return err
 	}
-	keywords := []string{"0 ", "px "}
-	return b.writeAsset(DefaultAssetCSS, minify(data, keywords))
+	return b.writeAsset(DefaultAssetCSS, data)
 }
 
 func (b *Builder) writeJS() error {
@@ -111,8 +110,7 @@ func (b *Builder) writeJS() error {
 	if err != nil {
 		return err
 	}
-	keywords := []string{"async ", "await ", "const ", "let ", "term term-expandable", "term term-expanded"}
-	return b.writeAsset(DefaultAssetJS, minify(data, keywords))
+	return b.writeAsset(DefaultAssetJS, data)
 }
 
 func (b *Builder) writeJSON() error {
@@ -138,17 +136,4 @@ func (b *Builder) writeAsset(filename string, data []byte) error {
 
 func NewBuilder() *Builder {
 	return &Builder{}
-}
-
-func minify(b []byte, keywords []string) []byte {
-	s := string(b)
-	for _, k := range keywords {
-		s = strings.ReplaceAll(s, k, strings.ReplaceAll(k, " ", "_"))
-	}
-	s = strings.ReplaceAll(s, " ", "")
-	for _, k := range keywords {
-		s = strings.ReplaceAll(s, strings.ReplaceAll(k, " ", "_"), k)
-	}
-	s = strings.ReplaceAll(s, "\n", "")
-	return []byte(s)
 }
