@@ -39,27 +39,27 @@ func (b *Builder) InitFlags() {
 	flag.Parse()
 }
 
-func (b *Builder) Build(t *Tree) error {
+func (b *Builder) Build(t *Tree) (err error) {
 	helper.InitProgressBar(10000, "3/3", "Generating thesaurus assets...")
 	go helper.StartPermanentProgress()
 	defer helper.FinishPermanentProgress()
 	b.SetThesaurus(t)
-	if err := b.makeDir(); err != nil {
-		return err
+	if err = b.makeDir(); err != nil {
+		return
 	}
-	if err := b.copyHTML(); err != nil {
-		return err
+	if err = b.copyHTML(); err != nil {
+		return
 	}
-	if err := b.copyCSS(); err != nil {
-		return err
+	if err = b.copyCSS(); err != nil {
+		return
 	}
-	if err := b.copyJS(); err != nil {
-		return err
+	if err = b.copyJS(); err != nil {
+		return
 	}
-	if err := b.copyJSON(); err != nil {
-		return err
+	if err = b.copyJSON(); err != nil {
+		return
 	}
-	return nil
+	return
 }
 
 func (b *Builder) makeDir() error {
