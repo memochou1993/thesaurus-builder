@@ -10,13 +10,20 @@
 </head>
 <body>
     <div id="title"></div>
-    <ul id="list"></ul>
-    <template data-template>
+    <ul id="root"></ul>
+    <template data-subject-template>
         <li class="subject">
             <div class="term"></div>
-            <div class="note"></div>
+            <div class="note">
+                <div class="descriptiveNotes"></div>
+            </div>
             <ul class="children"></ul>
         </li>
+    </template>
+    <template data-descriptive-note-template>
+        <div class="descriptiveNote">
+            <div class="noteText"></div>
+        </div>
     </template>
 </body>
 </html>

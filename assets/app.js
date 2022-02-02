@@ -3,39 +3,43 @@
  * @param {Object} prop
  * @param {Object} prop.subject
  * @param {Object} prop.subject.term
- * @param {Array} prop.subject.term.preferredTerms
+ * @param {Array}  prop.subject.term.preferredTerms
  * @param {string} prop.subject.term.preferredTerms[].termText
  * @param {Object} prop.subject.note
- * @param {Array} prop.subject.note.descriptiveNotes
+ * @param {Array}  prop.subject.note.descriptiveNotes
  * @param {string} prop.subject.note.descriptiveNotes[].noteText
- * @param {Array} prop.children
+ * @param {Array}  prop.children
  */
 const render = (target, prop) => {
-  const template = document.querySelector('[data-template]');
+  const template = document.querySelector('[data-subject-template]');
+  const noteTemplate = document.querySelector('[data-descriptive-note-template]');
   const [subject] = template.content.cloneNode(true).children;
   const [term, note, children] = subject.children;
+  const [descriptiveNotes] = note.children;
   prop.subject.term.preferredTerms.forEach((v) => {
     term.textContent = v.termText;
     term.classList.add(prop?.children?.length ? 'term-expandable' : 'term-expanded');
   });
   prop.subject.note?.descriptiveNotes?.forEach((v) => {
-    const child = document.createElement('div');
-    child.textContent = v.noteText;
-    note.append(child);
+    const [descriptiveNote] = noteTemplate.content.cloneNode(true).children;
+    const [noteText] = descriptiveNote.children;
+    noteText.textContent = v.noteText;
+    descriptiveNotes.append(descriptiveNote);
   });
   prop.children?.forEach((c) => render(children, c));
   target.appendChild(subject);
 };
+
 (async () => {
   const data = await fetch('data.json').then((r) => r.json());
   const title = document.querySelector('#title');
+  const root = document.querySelector('#root');
   title.textContent = data.title;
-  const list = document.querySelector('#list');
-  list.addEventListener('click', (e) => {
+  root.addEventListener('click', (e) => {
     if (e.target.classList.contains('term-expandable')) {
       e.target.parentElement.querySelector('.children').classList.toggle('active');
       e.target.classList.toggle('term-expanded');
     }
   });
-  render(list, data.root);
+  render(root, data.root);
 })();
