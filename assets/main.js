@@ -14,21 +14,23 @@ const noteTemplate = document.querySelector('[data-descriptive-note-template]');
  * @param {Array}  prop.children
  */
 const render = (target, prop) => {
-  const [subject] = subjectTemplate.content.cloneNode(true).children;
-  const [term, note, children] = subject.children;
-  const [descriptiveNotes] = note.children;
-  prop.subject.term.preferredTerms.forEach((item) => {
-    term.textContent = item.text;
-    term.classList.add(prop?.children?.length ? 'term-expandable' : 'term-expanded');
-  });
-  prop.subject.note?.descriptiveNotes?.forEach((item) => {
-    const [descriptiveNote] = noteTemplate.content.cloneNode(true).children;
-    const [text] = descriptiveNote.children;
-    text.textContent = item.text;
-    descriptiveNotes.append(descriptiveNote);
-  });
-  prop.children?.forEach((item) => render(children, item));
-  target.appendChild(subject);
+  setTimeout(() => {
+    const [subject] = subjectTemplate.content.cloneNode(true).children;
+    const [term, note, children] = subject.children;
+    const [descriptiveNotes] = note.children;
+    prop.subject.term.preferredTerms.forEach((item) => {
+      term.textContent = item.text;
+      term.classList.add(prop?.children?.length ? 'term-expandable' : 'term-expanded');
+    });
+    prop.subject.note?.descriptiveNotes?.forEach((item) => {
+      const [descriptiveNote] = noteTemplate.content.cloneNode(true).children;
+      const [text] = descriptiveNote.children;
+      text.textContent = item.text;
+      descriptiveNotes.append(descriptiveNote);
+    });
+    prop.children?.forEach((item) => render(children, item));
+    target.appendChild(subject);
+  }, 0);
 };
 
 (async () => {
