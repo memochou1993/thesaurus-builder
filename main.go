@@ -9,14 +9,14 @@ import (
 
 var (
 	//go:embed assets
-	assets  embed.FS
-	builder *thesaurus.Builder
+	assetsDir embed.FS
+	builder   *thesaurus.Builder
 )
 
 func init() {
 	builder = thesaurus.NewBuilder()
-	builder.SetAssets(assets)
-	builder.InitFlags()
+	builder.SetDefaultAssetsDir(assetsDir)
+	builder.Init()
 }
 
 func main() {

@@ -6,123 +6,148 @@ import (
 	"fmt"
 	"github.com/memochou1993/thesaurus-builder/helper"
 	"io/ioutil"
+	"log"
 	"os"
 	"strings"
 )
 
 const (
-	AssetsPath = "assets"
+	DefaultAssetsPath = "assets"
+	DefaultAssetHTML  = "index.html"
+	DefaultAssetCSS   = "app.css"
+	DefaultAssetJS    = "app.js"
+	DefaultAssetJSON  = "data.json"
 )
 
 type Builder struct {
-	Assets    embed.FS
-	Filename  string
-	OutputDir string
-	Thesaurus *Tree
+	AssetsDir        string
+	DefaultAssetsDir embed.FS
+	Filename         string
+	OutputDir        string
+	Tree             *Tree
 }
 
-func (b *Builder) SetAssets(a embed.FS) {
-	b.Assets = a
+func (b *Builder) SetDefaultAssetsDir(d embed.FS) {
+	b.DefaultAssetsDir = d
 }
 
-func (b *Builder) SetThesaurus(t *Tree) {
-	b.Thesaurus = t
+func (b *Builder) SetTree(t *Tree) {
+	b.Tree = t
 }
 
-func (b *Builder) InitFlags() {
+func (b *Builder) Init() {
 	flag.Usage = func() {
 		_, _ = fmt.Fprintln(os.Stderr, "Usage: tb [flags]")
 		flag.PrintDefaults()
 	}
-	flag.StringVar(&b.Filename, "f", "thesaurus.yaml", "source file")
+	flag.StringVar(&b.AssetsDir, "a", "", "assets directory")
+	flag.StringVar(&b.Filename, "f", "thesaurus.yaml", "thesaurus file")
 	flag.StringVar(&b.OutputDir, "o", "dist", "output directory")
 	flag.Parse()
+	if b.AssetsDir != "" {
+		b.checkAssetsDir()
+	}
 }
 
 func (b *Builder) Build(t *Tree) (err error) {
 	helper.InitProgressBar(10000, "3/3", "Generating thesaurus assets...")
 	go helper.StartPermanentProgress()
 	defer helper.FinishPermanentProgress()
-	b.SetThesaurus(t)
-	if err = b.makeDir(); err != nil {
+	b.SetTree(t)
+	if err = b.makeOutputDir(); err != nil {
 		return
 	}
-	if err = b.copyHTML(); err != nil {
+	if err = b.writeHTML(); err != nil {
 		return
 	}
-	if err = b.copyCSS(); err != nil {
+	if err = b.writeCSS(); err != nil {
 		return
 	}
-	if err = b.copyJS(); err != nil {
+	if err = b.writeJS(); err != nil {
 		return
 	}
-	if err = b.copyJSON(); err != nil {
+	if err = b.writeJSON(); err != nil {
 		return
 	}
 	return
 }
 
-func (b *Builder) makeDir() error {
-	if _, err := os.Stat(b.OutputDir); os.IsNotExist(err) {
-		return os.MkdirAll(b.OutputDir, 0755)
+func (b *Builder) checkAssetsDir() {
+	if _, err := os.Stat(b.AssetsDir); os.IsNotExist(err) {
+		log.Fatal(err)
+	}
+}
+
+func (b *Builder) makeOutputDir() error {
+	if _, err := os.Stat(b.OutputDir); err != nil {
+		if os.IsNotExist(err) {
+			return os.MkdirAll(b.OutputDir, 0755)
+		}
+		log.Fatal(err)
 	}
 	return nil
 }
 
-func (b *Builder) copyHTML() error {
-	filename := "index.html"
-	data, err := b.Assets.ReadFile(fmt.Sprintf("%s/%s", AssetsPath, filename))
+func (b *Builder) writeHTML() error {
+	data, err := b.readAsset(DefaultAssetHTML)
 	if err != nil {
 		return err
 	}
-	o := fmt.Sprintf("%s/%s", b.OutputDir, filename)
-	return ioutil.WriteFile(o, data, 0755)
+	return b.writeAsset(DefaultAssetHTML, data)
 }
 
-func (b *Builder) copyCSS() error {
-	filename := "app.css"
-	data, err := b.Assets.ReadFile(fmt.Sprintf("%s/%s", AssetsPath, filename))
+func (b *Builder) writeCSS() error {
+	data, err := b.readAsset(DefaultAssetCSS)
 	if err != nil {
 		return err
 	}
-	protectedKeywords := []string{"0 ", "px "}
-	s := string(data)
-	s = minify(s, protectedKeywords)
-	o := fmt.Sprintf("%s/%s", b.OutputDir, filename)
-	return ioutil.WriteFile(o, []byte(s), 0755)
+	keywords := []string{"0 ", "px "}
+	return b.writeAsset(DefaultAssetCSS, minify(data, keywords))
 }
 
-func (b *Builder) copyJS() error {
-	filename := "app.js"
-	data, err := b.Assets.ReadFile(fmt.Sprintf("%s/%s", AssetsPath, filename))
+func (b *Builder) writeJS() error {
+	data, err := b.readAsset(DefaultAssetJS)
 	if err != nil {
 		return err
 	}
-	protectedKeywords := []string{"async ", "await ", "const ", "let ", "term term-expandable", "term term-expanded"}
-	s := string(data)
-	s = minify(s, protectedKeywords)
-	o := fmt.Sprintf("%s/%s", b.OutputDir, filename)
-	return ioutil.WriteFile(o, []byte(s), 0755)
+	keywords := []string{"async ", "await ", "const ", "let ", "term term-expandable", "term term-expanded"}
+	return b.writeAsset(DefaultAssetJS, minify(data, keywords))
 }
 
-func (b *Builder) copyJSON() error {
-	filename := "data.json"
-	o := fmt.Sprintf("%s/%s", b.OutputDir, filename)
-	return ioutil.WriteFile(o, []byte(b.Thesaurus.ToJSON()), 0755)
+func (b *Builder) writeJSON() error {
+	return b.writeAsset(DefaultAssetJSON, []byte(b.Tree.ToJSON()))
+}
+
+func (b *Builder) readAsset(filename string) ([]byte, error) {
+	if b.AssetsDir != "" {
+		b, err := ioutil.ReadFile(fmt.Sprintf("%s/%s", b.AssetsDir, filename))
+		if err == nil {
+			return b, err
+		}
+		if !os.IsNotExist(err) {
+			log.Fatal(err)
+		}
+	}
+	return b.DefaultAssetsDir.ReadFile(fmt.Sprintf("%s/%s", DefaultAssetsPath, filename))
+}
+
+func (b *Builder) writeAsset(filename string, data []byte) error {
+	return ioutil.WriteFile(fmt.Sprintf("%s/%s", b.OutputDir, filename), data, 0755)
 }
 
 func NewBuilder() *Builder {
 	return &Builder{}
 }
 
-func minify(s string, protectedKeywords []string) string {
-	for _, k := range protectedKeywords {
+func minify(b []byte, keywords []string) []byte {
+	s := string(b)
+	for _, k := range keywords {
 		s = strings.ReplaceAll(s, k, strings.ReplaceAll(k, " ", "_"))
 	}
 	s = strings.ReplaceAll(s, " ", "")
-	for _, k := range protectedKeywords {
+	for _, k := range keywords {
 		s = strings.ReplaceAll(s, strings.ReplaceAll(k, " ", "_"), k)
 	}
 	s = strings.ReplaceAll(s, "\n", "")
-	return s
+	return []byte(s)
 }
