@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 )
 
-type Source struct {
+type Resource struct {
 	Title    string   `json:"title" yaml:"title"`
 	Subjects Subjects `json:"subjects" yaml:"subjects"`
 }
@@ -50,17 +50,17 @@ type Note struct {
 	NoteText string `json:"noteText" yaml:"noteText"`
 }
 
-func NewSource(filename string) (t *Source, err error) {
-	bar := helper.NewProgressBar(100000, "1/3", "Unmarshalling thesaurus file...")
+func NewResource(filename string) (r *Resource, err error) {
+	helper.InitProgressBar(100000, "1/3", "Unmarshalling thesaurus file...")
 	var b []byte
 	b, err = ioutil.ReadFile(filename)
 	if err != nil {
 		return
 	}
-	go helper.StartPermanentProgress(bar)
-	defer helper.FinishPermanentProgress(bar)
-	if err = yaml.Unmarshal(b, &t); err != nil {
+	go helper.StartPermanentProgress()
+	defer helper.FinishPermanentProgress()
+	if err = yaml.Unmarshal(b, &r); err != nil {
 		return
 	}
-	return t, nil
+	return r, nil
 }

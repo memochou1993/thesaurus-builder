@@ -8,7 +8,11 @@ import (
 	"time"
 )
 
-func NewProgressBar(max int, step string, description string) *progressbar.ProgressBar {
+var (
+	ProgressBar *progressbar.ProgressBar
+)
+
+func InitProgressBar(max int, step string, description string) {
 	theme := progressbar.Theme{
 		Saucer:        "[green]=[reset]",
 		SaucerHead:    "[green]>[reset]",
@@ -26,20 +30,20 @@ func NewProgressBar(max int, step string, description string) *progressbar.Progr
 			_, _ = fmt.Fprintln(os.Stdout)
 		}),
 	}
-	return progressbar.NewOptions(max, options...)
+	ProgressBar = progressbar.NewOptions(max, options...)
 }
 
-func StartPermanentProgress(bar *progressbar.ProgressBar) {
+func StartPermanentProgress() {
 	for {
-		if err := bar.Add(1); err != nil {
+		if err := ProgressBar.Add(1); err != nil {
 			log.Println(err)
 		}
 		time.Sleep(1 * time.Millisecond)
 	}
 }
 
-func FinishPermanentProgress(bar *progressbar.ProgressBar) {
-	if err := bar.Finish(); err != nil {
+func FinishPermanentProgress() {
+	if err := ProgressBar.Finish(); err != nil {
 		log.Println(err)
 	}
 }

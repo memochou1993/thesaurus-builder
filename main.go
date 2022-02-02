@@ -20,13 +20,13 @@ func init() {
 }
 
 func main() {
-	var s *thesaurus.Source
+	var r *thesaurus.Resource
 	var t *thesaurus.Tree
 	var err error
-	if s, err = thesaurus.NewSource(builder.Filename); err != nil {
+	if r, err = thesaurus.NewResource(builder.Filename); err != nil {
 		log.Fatal(err)
 	}
-	if t, err = thesaurus.NewTree(s); err != nil {
+	if t, err = thesaurus.NewTree(r); err != nil {
 		log.Fatal(err)
 	}
 	if err = builder.Build(t); err != nil {

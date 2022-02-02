@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/memochou1993/thesaurus-builder/helper"
-	"github.com/schollz/progressbar/v3"
 	"log"
 	"strings"
 )
@@ -52,8 +51,8 @@ func NewNode(subject Subject) *Node {
 	}
 }
 
-func NewTree(source *Source) (thesaurus *Tree, err error) {
-	bar := helper.NewProgressBar(len(source.Subjects), "2/3", "Building thesaurus tree...")
+func NewTree(source *Resource) (thesaurus *Tree, err error) {
+	helper.InitProgressBar(len(source.Subjects), "2/3", "Building thesaurus tree...")
 	thesaurus = &Tree{
 		Title: source.Title,
 	}
@@ -69,7 +68,7 @@ func NewTree(source *Source) (thesaurus *Tree, err error) {
 			}
 			thesaurus.Root = NewNode(*subject)
 			table[preferredTerm.TermText] = thesaurus.Root
-			if err := bar.Add(1); err != nil {
+			if err := helper.ProgressBar.Add(1); err != nil {
 				return nil, err
 			}
 			continue
@@ -79,10 +78,10 @@ func NewTree(source *Source) (thesaurus *Tree, err error) {
 	if thesaurus.Root == nil {
 		return nil, errors.New("root missing")
 	}
-	return thesaurus, buildTree(source.Subjects, table, bar)
+	return thesaurus, buildTree(source.Subjects, table)
 }
 
-func buildTree(subjects Subjects, table map[string]*Node, bar *progressbar.ProgressBar) (err error) {
+func buildTree(subjects Subjects, table map[string]*Node) (err error) {
 	var orphans Subjects
 	for i, subject := range subjects {
 		if subject.ParentRelationship.PreferredParents.IsEmpty() {
@@ -102,7 +101,7 @@ func buildTree(subjects Subjects, table map[string]*Node, bar *progressbar.Progr
 			parent.AppendChild(child)
 			preferredTerm := subject.Term.PreferredTerms.First()
 			table[preferredTerm.TermText] = child
-			if err := bar.Add(1); err != nil {
+			if err := helper.ProgressBar.Add(1); err != nil {
 				return err
 			}
 			continue
@@ -112,5 +111,5 @@ func buildTree(subjects Subjects, table map[string]*Node, bar *progressbar.Progr
 	if len(orphans) == len(subjects) {
 		return
 	}
-	return buildTree(orphans, table, bar)
+	return buildTree(orphans, table)
 }

@@ -40,9 +40,9 @@ func (b *Builder) InitFlags() {
 }
 
 func (b *Builder) Build(t *Tree) error {
-	bar := helper.NewProgressBar(10000, "3/3", "Generating thesaurus assets...")
-	go helper.StartPermanentProgress(bar)
-	defer helper.FinishPermanentProgress(bar)
+	helper.InitProgressBar(10000, "3/3", "Generating thesaurus assets...")
+	go helper.StartPermanentProgress()
+	defer helper.FinishPermanentProgress()
 	b.SetThesaurus(t)
 	if err := b.makeDir(); err != nil {
 		return err
