@@ -14,8 +14,8 @@ import (
 const (
 	DefaultAssetsPath = "assets"
 	DefaultAssetHTML  = "index.html"
-	DefaultAssetCSS   = "app.css"
-	DefaultAssetJS    = "app.js"
+	DefaultAssetCSS   = "style.css"
+	DefaultAssetJS    = "main.js"
 	DefaultAssetJSON  = "data.json"
 )
 
@@ -83,7 +83,7 @@ func (b *Builder) makeOutputDir() error {
 		if os.IsNotExist(err) {
 			return os.MkdirAll(b.OutputDir, 0755)
 		}
-		log.Fatal(err)
+		return err
 	}
 	return nil
 }
@@ -93,7 +93,9 @@ func (b *Builder) writeHTML() error {
 	if err != nil {
 		return err
 	}
-	return b.writeAsset(DefaultAssetHTML, data)
+	s := string(data)
+	s = strings.Replace(s, "__TITLE__", b.Tree.Title, 1)
+	return b.writeAsset(DefaultAssetHTML, []byte(s))
 }
 
 func (b *Builder) writeCSS() error {
