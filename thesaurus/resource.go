@@ -30,7 +30,15 @@ type Subject struct {
 type Terms []*Term
 
 func (t *Terms) IsEmpty() bool {
-	return len(*t) < 1
+	if len(*t) == 0 {
+		return true
+	}
+	for _, term := range *t {
+		if term.Text == "" {
+			return true
+		}
+	}
+	return false
 }
 
 func (t *Terms) First() *Term {
@@ -51,13 +59,12 @@ type Note struct {
 }
 
 func NewResource(filename string) (r *Resource, err error) {
-	helper.InitProgressBar(100000, "1/3", "Unmarshalling thesaurus file...")
 	var b []byte
 	b, err = ioutil.ReadFile(filename)
 	if err != nil {
 		return
 	}
-	go helper.StartPermanentProgress()
+	go helper.StartPermanentProgress(1200, "1/3", "Unmarshalling thesaurus file...")
 	defer helper.FinishPermanentProgress()
 	if err = yaml.Unmarshal(b, &r); err != nil {
 		return

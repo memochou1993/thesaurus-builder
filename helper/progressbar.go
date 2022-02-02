@@ -33,12 +33,13 @@ func InitProgressBar(max int, step string, description string) {
 	ProgressBar = progressbar.NewOptions(max, options...)
 }
 
-func StartPermanentProgress() {
+func StartPermanentProgress(max int, step string, description string) {
+	InitProgressBar(max, step, description)
 	for {
 		if err := ProgressBar.Add(1); err != nil {
 			log.Println(err)
 		}
-		time.Sleep(1 * time.Millisecond)
+		time.Sleep(100 * time.Millisecond)
 	}
 }
 

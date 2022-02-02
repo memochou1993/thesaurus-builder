@@ -50,8 +50,7 @@ func (b *Builder) Init() {
 }
 
 func (b *Builder) Build(t *Tree) (err error) {
-	helper.InitProgressBar(10000, "3/3", "Generating thesaurus assets...")
-	go helper.StartPermanentProgress()
+	go helper.StartPermanentProgress(1200, "3/3", "Generating thesaurus assets...")
 	defer helper.FinishPermanentProgress()
 	b.SetTree(t)
 	if err = b.makeOutputDir(); err != nil {
