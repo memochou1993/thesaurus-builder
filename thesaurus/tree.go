@@ -28,7 +28,7 @@ func (t *Tree) ToGraph(node *Node, level int) (s string) {
 		level++
 	}
 	preferredTerm := node.Subject.Term.PreferredTerms.First()
-	s += fmt.Sprintf("\n%s|- %s", strings.Repeat("  ", level), preferredTerm.TermText)
+	s += fmt.Sprintf("\n%s|- %s", strings.Repeat("  ", level), preferredTerm.Text)
 	level++
 	for _, child := range node.Children {
 		s += t.ToGraph(child, level)
@@ -64,16 +64,16 @@ func NewTree(source *Resource) (thesaurus *Tree, err error) {
 		preferredTerm := subject.Term.PreferredTerms.First()
 		if subject.ParentRelationship.PreferredParents.IsEmpty() {
 			if thesaurus.Root != nil {
-				return nil, errors.New(fmt.Sprintf("preferred parent missing (subject: \"%s\")", preferredTerm.TermText))
+				return nil, errors.New(fmt.Sprintf("preferred parent missing (subject: \"%s\")", preferredTerm.Text))
 			}
 			thesaurus.Root = NewNode(*subject)
-			table[preferredTerm.TermText] = thesaurus.Root
+			table[preferredTerm.Text] = thesaurus.Root
 			if err := helper.ProgressBar.Add(1); err != nil {
 				return nil, err
 			}
 			continue
 		}
-		table[preferredTerm.TermText] = nil
+		table[preferredTerm.Text] = nil
 	}
 	if thesaurus.Root == nil {
 		return nil, errors.New("root missing")
@@ -91,16 +91,16 @@ func buildTree(subjects Subjects, table map[string]*Node) (err error) {
 			return errors.New(fmt.Sprintf("preferred term missing (subject: #%d)", i+1))
 		}
 		preferredParent := subject.ParentRelationship.PreferredParents.First()
-		parent, ok := table[preferredParent.TermText]
+		parent, ok := table[preferredParent.Text]
 		if !ok {
 			preferredTerm := subject.Term.PreferredTerms.First()
-			return errors.New(fmt.Sprintf("preferred parent missing (subject: \"%s\")", preferredTerm.TermText))
+			return errors.New(fmt.Sprintf("preferred parent missing (subject: \"%s\")", preferredTerm.Text))
 		}
 		if parent != nil {
 			child := NewNode(*subject)
 			parent.AppendChild(child)
 			preferredTerm := subject.Term.PreferredTerms.First()
-			table[preferredTerm.TermText] = child
+			table[preferredTerm.Text] = child
 			if err := helper.ProgressBar.Add(1); err != nil {
 				return err
 			}

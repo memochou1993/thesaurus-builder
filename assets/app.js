@@ -4,10 +4,10 @@
  * @param {Object} prop.subject
  * @param {Object} prop.subject.term
  * @param {Array}  prop.subject.term.preferredTerms
- * @param {string} prop.subject.term.preferredTerms[].termText
+ * @param {string} prop.subject.term.preferredTerms[].text
  * @param {Object} prop.subject.note
  * @param {Array}  prop.subject.note.descriptiveNotes
- * @param {string} prop.subject.note.descriptiveNotes[].noteText
+ * @param {string} prop.subject.note.descriptiveNotes[].text
  * @param {Array}  prop.children
  */
 const render = (target, prop) => {
@@ -16,17 +16,17 @@ const render = (target, prop) => {
   const [subject] = template.content.cloneNode(true).children;
   const [term, note, children] = subject.children;
   const [descriptiveNotes] = note.children;
-  prop.subject.term.preferredTerms.forEach((v) => {
-    term.textContent = v.termText;
+  prop.subject.term.preferredTerms.forEach((item) => {
+    term.textContent = item.text;
     term.classList.add(prop?.children?.length ? 'term-expandable' : 'term-expanded');
   });
-  prop.subject.note?.descriptiveNotes?.forEach((v) => {
+  prop.subject.note?.descriptiveNotes?.forEach((item) => {
     const [descriptiveNote] = noteTemplate.content.cloneNode(true).children;
-    const [noteText] = descriptiveNote.children;
-    noteText.textContent = v.noteText;
+    const [text] = descriptiveNote.children;
+    text.textContent = item.text;
     descriptiveNotes.append(descriptiveNote);
   });
-  prop.children?.forEach((c) => render(children, c));
+  prop.children?.forEach((item) => render(children, item));
   target.appendChild(subject);
 };
 

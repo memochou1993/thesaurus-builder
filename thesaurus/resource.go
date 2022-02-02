@@ -41,13 +41,13 @@ func (t *Terms) First() *Term {
 }
 
 type Term struct {
-	TermText string `json:"termText" yaml:"termText"`
+	Text string `json:"text" yaml:"text"`
 }
 
 type Notes []*Note
 
 type Note struct {
-	NoteText string `json:"noteText" yaml:"noteText"`
+	Text string `json:"text" yaml:"text"`
 }
 
 func NewResource(filename string) (r *Resource, err error) {
