@@ -1,5 +1,7 @@
+const title = document.querySelector('#title');
+const root = document.querySelector('#root');
 const subjectTemplate = document.querySelector('[data-subject-template]');
-const noteTemplate = document.querySelector('[data-descriptive-note-template]');
+const descriptiveNoteTemplate = document.querySelector('[data-descriptive-note-template]');
 
 /**
  * @param {HTMLElement} target
@@ -23,7 +25,7 @@ const render = (target, prop) => {
       term.classList.add(prop?.children?.length ? 'term-expandable' : 'term-expanded');
     });
     prop.subject.note?.descriptiveNotes?.forEach((item) => {
-      const [descriptiveNote] = noteTemplate.content.cloneNode(true).children;
+      const [descriptiveNote] = descriptiveNoteTemplate.content.cloneNode(true).children;
       const [text] = descriptiveNote.children;
       text.textContent = item.text;
       descriptiveNotes.append(descriptiveNote);
@@ -35,14 +37,14 @@ const render = (target, prop) => {
 
 (async () => {
   const data = await fetch('data.json').then((r) => r.json());
-  const title = document.querySelector('#title');
-  const root = document.querySelector('#root');
   title.textContent = data.title;
-  root.addEventListener('click', (e) => {
-    if (e.target.classList.contains('term-expandable')) {
-      e.target.parentElement.querySelector('.children').classList.toggle('active');
-      e.target.classList.toggle('term-expanded');
-    }
-  });
   render(root, data.root);
+  document.body.hidden = false;
 })();
+
+root.addEventListener('click', (e) => {
+  if (e.target.classList.contains('term-expandable')) {
+    e.target.parentElement.querySelector('.children').classList.toggle('active');
+    e.target.classList.toggle('term-expanded');
+  }
+});
