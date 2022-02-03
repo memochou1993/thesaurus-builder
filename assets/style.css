@@ -12,6 +12,11 @@ html.full-height body {
   display: none;
 }
 #title {
+  margin: 12px 24px;
+}
+form {
+  display: flex;
+  justify-content: end;
   margin: 20px 24px;
 }
 ul {
