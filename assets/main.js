@@ -17,35 +17,38 @@ const noteTemplate = document.querySelector('[data-note-template]');
  * @param {Array}  prop.children
  */
 const render = (target, prop) => {
-  setTimeout(() => {
-    const [subject] = subjectTemplate.content.cloneNode(true).children;
-    const [preferredTerm, notes, children] = subject.children;
-    prop.subject.terms.some((item) => {
-      if (item.preferred) {
-        preferredTerm.textContent = item.text;
-        preferredTerm.classList.add(prop?.children?.length ? 'preferred-term-expandable' : 'preferred-term-expanded');
-        return true;
-      }
-    });
-    prop.subject.notes?.forEach((item) => {
-      const [note] = noteTemplate.content.cloneNode(true).children;
-      const [text] = note.children;
-      text.textContent = item.text;
-      notes.append(note);
-    });
-    prop.children?.forEach((item) => render(children, item));
-    target.appendChild(subject);
-  }, 0);
+  const [subject] = subjectTemplate.content.cloneNode(true).children;
+  const [preferredTerm, notes, children] = subject.children;
+  prop.subject.terms.some((item) => {
+    if (item.preferred) {
+      preferredTerm.textContent = item.text;
+      preferredTerm.classList.add(prop?.children?.length ? 'preferred-term-expandable' : 'preferred-term-expanded');
+      return true;
+    }
+  });
+  prop.subject.notes?.forEach((item) => {
+    const [note] = noteTemplate.content.cloneNode(true).children;
+    const [text] = note.children;
+    text.textContent = item.text;
+    notes.append(note);
+  });
+  target.appendChild(subject);
+  setTimeout(() => prop?.children?.forEach((item) => render(children, item)), 0);
 };
 
+const toggleSpinner = async (delay = 0) => {
+  await new Promise((res) => setTimeout(() => res(), delay));
+  document.documentElement.classList.toggle('full-height');
+  spinner.classList.toggle('hidden');
+  app.classList.toggle('hidden');
+}
+
 (async () => {
+  await toggleSpinner();
   const data = await fetch('data.json').then((r) => r.json());
   title.textContent = data.title;
   render(root, data.root);
-  await new Promise((res) => setTimeout(() => res(), 1000));
-  spinner.classList.toggle('hidden');
-  document.documentElement.classList.remove('full-height');
-  app.classList.toggle('hidden');
+  await toggleSpinner(1000);
 })();
 
 root.addEventListener('click', (e) => {
