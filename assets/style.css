@@ -36,10 +36,7 @@ li {
   cursor: pointer;
 }
 .note {
-  margin-left: 24px;
-}
-.descriptive-note {
-  margin: 8px 0;
+  margin: 8px 24px;
 }
 #spinner {
   animation: sk-rotateplane 1s infinite ease-in-out;

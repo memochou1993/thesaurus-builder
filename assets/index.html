@@ -18,14 +18,16 @@
     <template data-subject-template>
         <li class="subject">
             <div class="term"></div>
-            <div class="note">
-                <div class="descriptive-notes"></div>
+            <div class="notes">
+                <!-- insert "data-note-template" -->
             </div>
-            <ul class="children hidden"></ul>
+            <ul class="children hidden">
+                <!-- insert "data-subject-template" -->
+            </ul>
         </li>
     </template>
-    <template data-descriptive-note-template>
-        <div class="descriptive-note">
+    <template data-note-template>
+        <div class="note">
             <div class="note-text"></div>
         </div>
     </template>

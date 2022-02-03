@@ -22,9 +22,7 @@ type Subject struct {
 		PreferredParents    Terms `json:"preferredParents" yaml:"preferredParents"`
 		NonPreferredParents Terms `json:"nonPreferredParents,omitempty" yaml:"nonPreferredParents"`
 	} `json:"parentRelationship" yaml:"parentRelationship"`
-	Note struct {
-		DescriptiveNotes Notes `json:"descriptiveNotes,omitempty" yaml:"descriptiveNotes"`
-	} `json:"note" yaml:"note"`
+	Notes Notes `json:"notes" yaml:"notes"`
 }
 
 type Terms []*Term
