@@ -43,7 +43,9 @@ func (t *Tree) toMD(node *Node, level int) (s string) {
 	}
 	preferredTerm := node.Subject.Terms.FirstPreferred()
 	s += fmt.Sprintf("\n%s- %s\n", strings.Repeat("  ", level), preferredTerm.Text)
-	s += fmt.Sprintf("\n%s  %s\n", strings.Repeat("  ", level), node.Subject.Notes[0].Text)
+	for _, note := range node.Subject.Notes {
+		s += fmt.Sprintf("\n%s  %s\n", strings.Repeat("  ", level), note.Text)
+	}
 	level++
 	for _, child := range node.Children {
 		s += t.toMD(child, level)
