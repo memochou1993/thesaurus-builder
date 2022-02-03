@@ -36,6 +36,21 @@ func (t *Tree) ToGraph(node *Node, level int) (s string) {
 	return
 }
 
+func (t *Tree) toMD(node *Node, level int) (s string) {
+	if level == 0 {
+		s = fmt.Sprintf("%s\n===\n", t.Title)
+		level++
+	}
+	preferredTerm := node.Subject.Terms.FirstPreferred()
+	s += fmt.Sprintf("\n%s- %s\n", strings.Repeat("  ", level), preferredTerm.Text)
+	s += fmt.Sprintf("\n%s  %s\n", strings.Repeat("  ", level), node.Subject.Notes[0].Text)
+	level++
+	for _, child := range node.Children {
+		s += t.toMD(child, level)
+	}
+	return
+}
+
 type Node struct {
 	Subject  Subject `json:"subject"`
 	Children []*Node `json:"children,omitempty"`

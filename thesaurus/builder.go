@@ -17,6 +17,7 @@ const (
 	DefaultAssetCSS   = "style.css"
 	DefaultAssetJS    = "main.js"
 	DefaultAssetJSON  = "data.json"
+	DefaultAssetMD    = "index.md"
 )
 
 type Builder struct {
@@ -68,6 +69,9 @@ func (b *Builder) Build(t *Tree) (err error) {
 	if err = b.writeJSON(); err != nil {
 		return
 	}
+	if err = b.writeMD(); err != nil {
+		return
+	}
 	return
 }
 
@@ -115,6 +119,10 @@ func (b *Builder) writeJS() error {
 
 func (b *Builder) writeJSON() error {
 	return b.writeAsset(DefaultAssetJSON, []byte(b.Tree.ToJSON()))
+}
+
+func (b *Builder) writeMD() error {
+	return b.writeAsset(DefaultAssetMD, []byte(b.Tree.toMD(b.Tree.Root, 0)))
 }
 
 func (b *Builder) readAsset(filename string) ([]byte, error) {
