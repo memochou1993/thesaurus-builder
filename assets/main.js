@@ -9,9 +9,9 @@ const noteTemplate = document.querySelector('[data-note-template]');
  * @param {HTMLElement} target
  * @param {Object} prop
  * @param {Object} prop.subject
- * @param {Object} prop.subject.term
- * @param {Array}  prop.subject.term.preferredTerms
- * @param {string} prop.subject.term.preferredTerms[].text
+ * @param {Object} prop.subject.terms
+ * @param {Array}  prop.subject.terms[].text
+ * @param {Array}  prop.subject.terms[].preferred
  * @param {Object} prop.subject.notes
  * @param {string} prop.subject.notes[].text
  * @param {Array}  prop.children
@@ -19,10 +19,13 @@ const noteTemplate = document.querySelector('[data-note-template]');
 const render = (target, prop) => {
   setTimeout(() => {
     const [subject] = subjectTemplate.content.cloneNode(true).children;
-    const [term, notes, children] = subject.children;
-    prop.subject.term.preferredTerms.forEach((item) => {
-      term.textContent = item.text;
-      term.classList.add(prop?.children?.length ? 'term-expandable' : 'term-expanded');
+    const [preferredTerm, notes, children] = subject.children;
+    prop.subject.terms.some((item) => {
+      if (item.preferred) {
+        preferredTerm.textContent = item.text;
+        preferredTerm.classList.add(prop?.children?.length ? 'preferred-term-expandable' : 'preferred-term-expanded');
+        return true;
+      }
     });
     prop.subject.notes?.forEach((item) => {
       const [note] = noteTemplate.content.cloneNode(true).children;
@@ -46,8 +49,8 @@ const render = (target, prop) => {
 })();
 
 root.addEventListener('click', (e) => {
-  if (e.target.classList.contains('term-expandable')) {
+  if (e.target.classList.contains('preferred-term-expandable')) {
     e.target.parentElement.querySelector('.children').classList.toggle('hidden');
-    e.target.classList.toggle('term-expanded');
+    e.target.classList.toggle('preferred-term-expanded');
   }
 });

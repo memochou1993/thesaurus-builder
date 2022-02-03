@@ -27,7 +27,7 @@ func (t *Tree) ToGraph(node *Node, level int) (s string) {
 		s = t.Title
 		level++
 	}
-	preferredTerm := node.Subject.Term.PreferredTerms.First()
+	preferredTerm := node.Subject.Terms.FirstPreferred()
 	s += fmt.Sprintf("\n%s|- %s", strings.Repeat("  ", level), preferredTerm.Text)
 	level++
 	for _, child := range node.Children {
@@ -58,11 +58,11 @@ func NewTree(source *Resource) (thesaurus *Tree, err error) {
 	}
 	table := make(map[string]*Node, len(source.Subjects))
 	for i, subject := range source.Subjects {
-		if subject.Term.PreferredTerms.IsEmpty() {
+		preferredTerm := subject.Terms.FirstPreferred()
+		if preferredTerm == nil {
 			return nil, errors.New(fmt.Sprintf("preferred term missing (subject: #%d)", i+1))
 		}
-		preferredTerm := subject.Term.PreferredTerms.First()
-		if subject.ParentRelationship.PreferredParents.IsEmpty() {
+		if subject.ParentRelationships.FirstPreferred() == nil {
 			if thesaurus.Root != nil {
 				return nil, errors.New(fmt.Sprintf("preferred parent missing (subject: \"%s\")", preferredTerm.Text))
 			}
@@ -84,22 +84,21 @@ func NewTree(source *Resource) (thesaurus *Tree, err error) {
 func buildTree(subjects Subjects, table map[string]*Node) (err error) {
 	var orphans Subjects
 	for i, subject := range subjects {
-		if subject.ParentRelationship.PreferredParents.IsEmpty() {
+		if subject.ParentRelationships.FirstPreferred() == nil {
 			continue
 		}
-		if subject.Term.PreferredTerms.IsEmpty() {
+		preferredTerm := subject.Terms.FirstPreferred()
+		if preferredTerm == nil {
 			return errors.New(fmt.Sprintf("preferred term missing (subject: #%d)", i+1))
 		}
-		preferredParent := subject.ParentRelationship.PreferredParents.First()
+		preferredParent := subject.ParentRelationships.FirstPreferred()
 		parent, ok := table[preferredParent.Text]
 		if !ok {
-			preferredTerm := subject.Term.PreferredTerms.First()
 			return errors.New(fmt.Sprintf("preferred parent missing (subject: \"%s\")", preferredTerm.Text))
 		}
 		if parent != nil {
 			child := NewNode(*subject)
 			parent.AppendChild(child)
-			preferredTerm := subject.Term.PreferredTerms.First()
 			table[preferredTerm.Text] = child
 			if err := helper.ProgressBar.Add(1); err != nil {
 				return err

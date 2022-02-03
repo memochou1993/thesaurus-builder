@@ -14,40 +14,25 @@ type Resource struct {
 type Subjects []*Subject
 
 type Subject struct {
-	Term struct {
-		PreferredTerms    Terms `json:"preferredTerms" yaml:"preferredTerms"`
-		NonPreferredTerms Terms `json:"nonPreferredTerms,omitempty" yaml:"nonPreferredTerms"`
-	} `json:"term" yaml:"term"`
-	ParentRelationship struct {
-		PreferredParents    Terms `json:"preferredParents" yaml:"preferredParents"`
-		NonPreferredParents Terms `json:"nonPreferredParents,omitempty" yaml:"nonPreferredParents"`
-	} `json:"parentRelationship" yaml:"parentRelationship"`
-	Notes Notes `json:"notes" yaml:"notes"`
+	Terms               Terms `json:"terms" yaml:"terms"`
+	ParentRelationships Terms `json:"parentRelationships,omitempty" yaml:"parentRelationships"`
+	Notes               Notes `json:"notes,omitempty" yaml:"notes"`
 }
 
 type Terms []*Term
 
-func (t *Terms) IsEmpty() bool {
-	if len(*t) == 0 {
-		return true
-	}
+func (t *Terms) FirstPreferred() *Term {
 	for _, term := range *t {
-		if term.Text == "" {
-			return true
+		if term.Preferred {
+			return term
 		}
-	}
-	return false
-}
-
-func (t *Terms) First() *Term {
-	for _, term := range *t {
-		return term
 	}
 	return nil
 }
 
 type Term struct {
-	Text string `json:"text" yaml:"text"`
+	Text      string `json:"text" yaml:"text"`
+	Preferred bool   `json:"preferred" yaml:"preferred"`
 }
 
 type Notes []*Note

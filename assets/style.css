@@ -22,17 +22,17 @@ ul {
 li {
   margin: 20px 12px 20px 24px;
 }
-.term::before {
+.preferred-term::before {
   color: black;
   content: "\25B6";
   display: inline-block;
   margin-right: calc(8px * .75);
   transform: scale(.75);
 }
-.term-expanded::before {
+.preferred-term-expanded::before {
   transform: scale(.75) rotate(90deg);
 }
-.term-expandable {
+.preferred-term-expandable {
   cursor: pointer;
 }
 .note {
