@@ -19,11 +19,10 @@ const noteTemplate = document.querySelector('[data-note-template]');
 const render = (target, prop) => {
   const [subject] = subjectTemplate.content.cloneNode(true).children;
   const [preferredTerm, notes, children] = subject.children;
-  prop.subject.terms.some((item) => {
+  prop.subject.terms.forEach((item) => {
     if (item.preferred) {
       preferredTerm.textContent = item.text;
       preferredTerm.classList.add(prop?.children?.length ? 'preferred-term-expandable' : 'preferred-term-expanded');
-      return true;
     }
   });
   prop.subject.notes?.forEach((item) => {
