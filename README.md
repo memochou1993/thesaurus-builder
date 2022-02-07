@@ -122,3 +122,9 @@ Run `main.go` and specify `example.yaml` as a testing file.
 ```BASH
 go run main.go -f example.yaml
 ```
+
+# Contributors
+
+<a href="https://github.com/memochou1993/thesaurus-builder/graphs/contributors">
+  <img alt="contributors" src="https://contrib.rocks/image?repo=memochou1993/thesaurus-builder" />
+</a>
