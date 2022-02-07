@@ -56,7 +56,7 @@ Build static site with binary.
 
 # Usage
 
-## Fields of thesaurus
+## Fields of Thesaurus
 
 ### title
 
@@ -78,7 +78,7 @@ Parents of subject. There must be and can only be one preferred parent in a subj
 
 Notes of subject.
 
-## Command line options
+## Command Line Options
 
 | Option | Default Value  | Description            |
 | ------ | -------------- | ---------------------- |
