@@ -8,6 +8,9 @@ html.full-height body {
   justify-content: center;
   margin: 0;
 }
+body {
+  background-color: #EFEFEF;
+}
 .hidden {
   display: none;
 }
