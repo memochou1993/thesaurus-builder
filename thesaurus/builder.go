@@ -13,25 +13,25 @@ import (
 )
 
 const (
-	DefaultAssetsPath = "assets"
-	DefaultAssetHTML  = "index.html"
-	DefaultAssetCSS   = "style.css"
-	DefaultAssetJS    = "main.js"
-	DefaultAssetJSON  = "data.json"
-	DefaultAssetMD    = "index.md"
+	DefaultThemesDir = "themes"
+	DefaultAssetHTML = "index.html"
+	DefaultAssetCSS  = "style.css"
+	DefaultAssetJS   = "main.js"
+	DefaultAssetJSON = "data.json"
+	DefaultAssetMD   = "index.md"
 )
 
 type Builder struct {
-	AssetsDir        string
-	DefaultAssetsDir embed.FS
+	CustomThemeDir   string
+	DefaultThemesDir embed.FS
 	Filename         string
 	OutputDir        string
 	Theme            string
 	Tree             *Tree
 }
 
-func (b *Builder) SetDefaultAssetsDir(d embed.FS) {
-	b.DefaultAssetsDir = d
+func (b *Builder) SetDefaultThemesDir(d embed.FS) {
+	b.DefaultThemesDir = d
 }
 
 func (b *Builder) SetTree(t *Tree) {
@@ -43,12 +43,12 @@ func (b *Builder) Init() {
 		_, _ = fmt.Fprintln(os.Stderr, "Usage: tb [flags]")
 		flag.PrintDefaults()
 	}
-	flag.StringVar(&b.AssetsDir, "a", "", "assets directory")
+	flag.StringVar(&b.CustomThemeDir, "td", "", "custom theme directory")
 	flag.StringVar(&b.Filename, "f", "thesaurus.yaml", "thesaurus file")
 	flag.StringVar(&b.OutputDir, "o", "dist", "output directory")
 	flag.StringVar(&b.Theme, "t", "default", "theme")
 	flag.Parse()
-	if b.AssetsDir != "" {
+	if b.CustomThemeDir != "" {
 		b.checkAssetsDir()
 	}
 }
@@ -79,7 +79,7 @@ func (b *Builder) Build(t *Tree) (err error) {
 }
 
 func (b *Builder) checkAssetsDir() {
-	if _, err := os.Stat(b.AssetsDir); os.IsNotExist(err) {
+	if _, err := os.Stat(b.CustomThemeDir); os.IsNotExist(err) {
 		log.Fatal(err)
 	}
 }
@@ -129,8 +129,8 @@ func (b *Builder) writeMD() error {
 }
 
 func (b *Builder) readAsset(filename string) ([]byte, error) {
-	if b.AssetsDir != "" {
-		b, err := ioutil.ReadFile(fmt.Sprintf("%s/%s", b.AssetsDir, filename))
+	if b.CustomThemeDir != "" {
+		b, err := ioutil.ReadFile(fmt.Sprintf("%s/%s", b.CustomThemeDir, filename))
 		if err == nil {
 			return b, err
 		}
@@ -138,7 +138,7 @@ func (b *Builder) readAsset(filename string) ([]byte, error) {
 			log.Fatal(err)
 		}
 	}
-	return b.DefaultAssetsDir.ReadFile(fmt.Sprintf("%s/%s/%s", DefaultAssetsPath, b.Theme, filename))
+	return b.DefaultThemesDir.ReadFile(fmt.Sprintf("%s/%s/%s", DefaultThemesDir, b.Theme, filename))
 }
 
 func (b *Builder) writeAsset(filename string, data []byte) error {

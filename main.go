@@ -8,14 +8,14 @@ import (
 )
 
 var (
-	//go:embed assets
-	assetsDir embed.FS
+	//go:embed themes
+	themesDir embed.FS
 	builder   *thesaurus.Builder
 )
 
 func init() {
 	builder = thesaurus.NewBuilder()
-	builder.SetDefaultAssetsDir(assetsDir)
+	builder.SetDefaultThemesDir(themesDir)
 	builder.Init()
 }
 
