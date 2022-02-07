@@ -139,12 +139,14 @@ func (b *Builder) readAsset(filename string) ([]byte, error) {
 			log.Fatal(err)
 		}
 	}
-	data, err := b.DefaultThemesDir.ReadFile(fmt.Sprintf("%s/%s/%s", DefaultThemesDir, b.Theme, filename))
-	if err == nil {
-		return data, err
-	}
-	if !os.IsNotExist(err) {
-		log.Fatal(err)
+	if b.Theme != "" {
+		data, err := b.DefaultThemesDir.ReadFile(fmt.Sprintf("%s/%s/%s", DefaultThemesDir, b.Theme, filename))
+		if err == nil {
+			return data, err
+		}
+		if !os.IsNotExist(err) {
+			log.Fatal(err)
+		}
 	}
 	return b.DefaultThemesDir.ReadFile(fmt.Sprintf("%s/%s/%s", DefaultThemesDir, DefaultThemeDir, filename))
 }
