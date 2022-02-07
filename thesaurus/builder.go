@@ -4,11 +4,12 @@ import (
 	"embed"
 	"flag"
 	"fmt"
-	"github.com/memochou1993/thesaurus-builder/helper"
 	"io/ioutil"
 	"log"
 	"os"
 	"strings"
+
+	"github.com/memochou1993/thesaurus-builder/helper"
 )
 
 const (
@@ -25,6 +26,7 @@ type Builder struct {
 	DefaultAssetsDir embed.FS
 	Filename         string
 	OutputDir        string
+	Theme            string
 	Tree             *Tree
 }
 
@@ -44,6 +46,7 @@ func (b *Builder) Init() {
 	flag.StringVar(&b.AssetsDir, "a", "", "assets directory")
 	flag.StringVar(&b.Filename, "f", "thesaurus.yaml", "thesaurus file")
 	flag.StringVar(&b.OutputDir, "o", "dist", "output directory")
+	flag.StringVar(&b.Theme, "t", "default", "theme")
 	flag.Parse()
 	if b.AssetsDir != "" {
 		b.checkAssetsDir()
@@ -135,7 +138,7 @@ func (b *Builder) readAsset(filename string) ([]byte, error) {
 			log.Fatal(err)
 		}
 	}
-	return b.DefaultAssetsDir.ReadFile(fmt.Sprintf("%s/%s", DefaultAssetsPath, filename))
+	return b.DefaultAssetsDir.ReadFile(fmt.Sprintf("%s/%s/%s", DefaultAssetsPath, b.Theme, filename))
 }
 
 func (b *Builder) writeAsset(filename string, data []byte) error {
