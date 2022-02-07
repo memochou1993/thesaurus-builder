@@ -12,6 +12,7 @@ body {
   background-color: #000000;
   filter: invert(100%) hue-rotate(30deg);
   font-size: 18px;
+  margin-bottom: 30px;
 }
 .hidden {
   display: none;

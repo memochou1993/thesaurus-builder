@@ -11,6 +11,7 @@ html.full-height body {
 body {
   background-color: #EFEFEF;
   font-size: 18px;
+  margin-bottom: 30px;
 }
 .hidden {
   display: none;
