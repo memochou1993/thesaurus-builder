@@ -78,14 +78,14 @@ Parents of subject. There must be and can only be one preferred parent in a subj
 
 Notes of subject.
 
-## Arguments of CLI
+## Command line options
 
-| Argument | Default Value  | Description            |
-| -------- | -------------- | ---------------------- |
-| -f       | thesaurus.yaml | thesaurus file         |
-| -o       | dist           | output directory       |
-| -t       | theme          | default                |
-| -td      | N/A            | custom theme directory |
+| Option | Default Value  | Description            |
+| ------ | -------------- | ---------------------- |
+| -f     | thesaurus.yaml | thesaurus file         |
+| -o     | dist           | output directory       |
+| -t     | theme          | default                |
+| -td    | N/A            | custom theme directory |
 
 ## Available Themes
 
