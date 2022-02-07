@@ -1,3 +1,3 @@
 #!/bin/bash
 
-go build -o tb
+go build -o bin/tb
