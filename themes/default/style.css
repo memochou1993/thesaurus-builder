@@ -32,8 +32,8 @@ ul {
 li {
   border: 1px solid #AEAEAE;
   border-radius: 4px;
-  margin: 12px 12px 4px 24px;
-  padding: 12px; 
+  margin: 8px 12px 4px 24px;
+  padding: 8px;
 }
 .caption {
   font-size: 14px;
@@ -57,7 +57,8 @@ li {
   cursor: pointer;
 }
 .terms,
-.notes {
+.notes,
+.narrower-terms {
   margin-left: 24px;
 }
 .term,
