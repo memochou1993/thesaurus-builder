@@ -19,11 +19,6 @@ body {
 #title {
   margin: 12px 24px;
 }
-form {
-  display: flex;
-  justify-content: end;
-  margin: 20px 12px;
-}
 ul {
   list-style-type: none;
   margin: 0;
@@ -42,19 +37,6 @@ li {
 .preferred-term {
   font-weight: 600;
   font-size: 20px;
-}
-.preferred-term::before {
-  color: #000000;
-  content: "\25B6";
-  display: inline-block;
-  margin-right: calc(8px * .75);
-  transform: scale(.75);
-}
-.preferred-term-expanded::before {
-  transform: scale(.75) rotate(90deg);
-}
-.preferred-term-expandable {
-  cursor: pointer;
 }
 .terms,
 .notes {
