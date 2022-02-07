@@ -4,6 +4,7 @@ const title = document.querySelector('#title');
 const input = document.querySelector('#input');
 const root = document.querySelector('#root');
 const subjectTemplate = document.querySelector('[data-subject-template]');
+const termTemplate = document.querySelector('[data-term-template]');
 const noteTemplate = document.querySelector('[data-note-template]');
 
 /**
@@ -19,12 +20,16 @@ const noteTemplate = document.querySelector('[data-note-template]');
  */
 const render = (target, prop) => {
   const [subject] = subjectTemplate.content.cloneNode(true).children;
-  const [preferredTerm, notes, children] = subject.children;
+  const [preferredTerm, notes, terms, children] = subject.children;
   prop.subject.terms.forEach((item) => {
     if (item.preferred) {
       preferredTerm.textContent = item.text;
       preferredTerm.classList.add(prop?.children?.length ? 'preferred-term-expandable' : 'preferred-term-expanded');
-    }
+   }
+    const [term] = termTemplate.content.cloneNode(true).children;
+    const [text] = term.children;
+    text.textContent = item.preferred ? `${item.text} (preferred)` : item.text;
+    terms.appendChild(term);
   });
   prop.subject.notes?.forEach((item) => {
     const [note] = noteTemplate.content.cloneNode(true).children;

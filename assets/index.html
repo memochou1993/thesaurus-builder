@@ -24,12 +24,22 @@
         <li class="subject">
             <div class="preferred-term"></div>
             <div class="notes">
+                <div class="caption">Notes:</div>
                 <!-- insert "data-note-template" -->
+            </div>
+            <div class="terms">
+                <div class="caption">Terms:</div>
+                <!-- insert "data-term-template" -->
             </div>
             <ul class="children hidden">
                 <!-- insert "data-subject-template" -->
             </ul>
         </li>
+    </template>
+    <template data-term-template>
+        <div class="term">
+            <div class="term-text"></div>
+        </div>
     </template>
     <template data-note-template>
         <div class="note">
