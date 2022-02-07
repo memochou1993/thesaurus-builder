@@ -20,6 +20,9 @@ body {
 #title {
   margin: 12px 24px;
 }
+form {
+  display: none;
+}
 ul {
   list-style-type: none;
   margin: 0;
@@ -34,6 +37,9 @@ li {
 .caption {
   font-size: 14px;
   margin: 4px 0;
+}
+.children {
+  display: block;
 }
 .preferred-term {
   font-weight: 600;
