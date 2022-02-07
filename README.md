@@ -3,6 +3,10 @@ Thesaurus Builder
 
 Thesaurus Builder is a CLI tool to build a static site of thesaurus.
 
+# DEMO
+
+- [Art & Architecture Thesaurus](https://memochou1993.github.io/aat-simplified/)
+
 # Quick Start
 
 Create a `thesaurus.yaml` file.
