@@ -14,6 +14,7 @@ import (
 
 const (
 	DefaultThemesDir = "themes"
+	DefaultThemeDir  = "default"
 	DefaultAssetHTML = "index.html"
 	DefaultAssetCSS  = "style.css"
 	DefaultAssetJS   = "main.js"
@@ -130,15 +131,22 @@ func (b *Builder) writeMD() error {
 
 func (b *Builder) readAsset(filename string) ([]byte, error) {
 	if b.CustomThemeDir != "" {
-		b, err := ioutil.ReadFile(fmt.Sprintf("%s/%s", b.CustomThemeDir, filename))
+		data, err := ioutil.ReadFile(fmt.Sprintf("%s/%s", b.CustomThemeDir, filename))
 		if err == nil {
-			return b, err
+			return data, err
 		}
 		if !os.IsNotExist(err) {
 			log.Fatal(err)
 		}
 	}
-	return b.DefaultThemesDir.ReadFile(fmt.Sprintf("%s/%s/%s", DefaultThemesDir, b.Theme, filename))
+	data, err := b.DefaultThemesDir.ReadFile(fmt.Sprintf("%s/%s/%s", DefaultThemesDir, b.Theme, filename))
+	if err == nil {
+		return data, err
+	}
+	if !os.IsNotExist(err) {
+		log.Fatal(err)
+	}
+	return b.DefaultThemesDir.ReadFile(fmt.Sprintf("%s/%s/%s", DefaultThemesDir, DefaultThemeDir, filename))
 }
 
 func (b *Builder) writeAsset(filename string, data []byte) error {
