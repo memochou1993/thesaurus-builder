@@ -56,7 +56,7 @@ li:last-child {
   margin-right: calc(8px * .75);
   transform: scale(.75) rotate(90deg);
 }
-.preferred-term-collapsed::before {
+.preferred-term-clicked::before {
   transform: scale(.75);
 }
 .term,

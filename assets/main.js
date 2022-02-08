@@ -61,6 +61,6 @@ const toggleSpinner = async (delay = 0) => {
 root.addEventListener('click', (e) => {
   if (e.target.classList.contains('pointer')) {
     e.target.parentElement.querySelector('.narrower-terms').classList.toggle('hidden');
-    e.target.classList.toggle('preferred-term-collapsed');
+    e.target.classList.toggle('preferred-term-clicked');
   }
 });
