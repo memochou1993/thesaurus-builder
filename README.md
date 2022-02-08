@@ -85,13 +85,7 @@ Notes of subject.
 | ------ | -------------- | ---------------------- |
 | -f     | thesaurus.yaml | thesaurus file         |
 | -o     | dist           | output directory       |
-| -t     | theme          | default                |
 | -td    | N/A            | custom theme directory |
-
-## Available Themes
-
-- default
-- expanded
 
 ## Custom Theme
 
