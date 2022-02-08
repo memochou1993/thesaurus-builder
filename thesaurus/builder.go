@@ -13,8 +13,7 @@ import (
 )
 
 const (
-	DefaultThemesDir = "themes"
-	DefaultThemeDir  = "default"
+	DefaultAssetsDir = "assets"
 	DefaultAssetHTML = "index.html"
 	DefaultAssetCSS  = "style.css"
 	DefaultAssetJS   = "main.js"
@@ -23,16 +22,16 @@ const (
 )
 
 type Builder struct {
-	CustomThemeDir   string
-	DefaultThemesDir embed.FS
-	Filename         string
-	OutputDir        string
-	Theme            string
-	Tree             *Tree
+	AssetsDir      embed.FS
+	CustomThemeDir string
+	Filename       string
+	OutputDir      string
+	Theme          string
+	Tree           *Tree
 }
 
-func (b *Builder) SetDefaultThemesDir(d embed.FS) {
-	b.DefaultThemesDir = d
+func (b *Builder) SetAssetsDir(a embed.FS) {
+	b.AssetsDir = a
 }
 
 func (b *Builder) SetTree(t *Tree) {
@@ -44,10 +43,9 @@ func (b *Builder) Init() {
 		_, _ = fmt.Fprintln(os.Stderr, "Usage: tb [flags]")
 		flag.PrintDefaults()
 	}
-	flag.StringVar(&b.CustomThemeDir, "td", "", "custom theme directory")
+	flag.StringVar(&b.CustomThemeDir, "t", "", "custom theme directory")
 	flag.StringVar(&b.Filename, "f", "thesaurus.yaml", "thesaurus file")
 	flag.StringVar(&b.OutputDir, "o", "dist", "output directory")
-	flag.StringVar(&b.Theme, "t", "default", "theme")
 	flag.Parse()
 	if b.CustomThemeDir != "" {
 		b.checkAssetsDir()
@@ -139,16 +137,7 @@ func (b *Builder) readAsset(filename string) ([]byte, error) {
 			log.Fatal(err)
 		}
 	}
-	if b.Theme != "" {
-		data, err := b.DefaultThemesDir.ReadFile(fmt.Sprintf("%s/%s/%s", DefaultThemesDir, b.Theme, filename))
-		if err == nil {
-			return data, err
-		}
-		if !os.IsNotExist(err) {
-			log.Fatal(err)
-		}
-	}
-	return b.DefaultThemesDir.ReadFile(fmt.Sprintf("%s/%s/%s", DefaultThemesDir, DefaultThemeDir, filename))
+	return b.AssetsDir.ReadFile(fmt.Sprintf("%s/%s", DefaultAssetsDir, filename))
 }
 
 func (b *Builder) writeAsset(filename string, data []byte) error {

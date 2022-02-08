@@ -85,14 +85,14 @@ Notes of subject.
 | ------ | -------------- | ---------------------- |
 | -f     | thesaurus.yaml | thesaurus file         |
 | -o     | dist           | output directory       |
-| -td    | N/A            | custom theme directory |
+| -t     | N/A            | custom theme directory |
 
 ## Custom Theme
 
 Copy default theme, and open in browser.
 
 ```BASH
-cp -R themes/default my-theme
+cp -R assets my-theme
 ```
 
 Customize styles.
@@ -107,7 +107,7 @@ body {
 Build static site with binary.
 
 ```BASH
-./bin/tb -td my-theme
+./bin/tb -t my-theme
 ```
 
 # Development
