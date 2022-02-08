@@ -32,12 +32,12 @@ ul {
 li {
   border: 1px solid #AEAEAE;
   border-radius: 4px;
-  margin: 8px 12px 4px 24px;
+  margin: 8px 12px 8px 24px;
   padding: 8px;
 }
 .caption {
   font-size: 14px;
-  margin: 4px 0;
+  margin: 4px 0 4px 24px;
 }
 .preferred-term {
   font-weight: 600;
@@ -56,14 +56,9 @@ li {
 .preferred-term-expandable {
   cursor: pointer;
 }
-.terms,
-.notes,
-.narrower-terms {
-  margin-left: 24px;
-}
 .term,
 .note {
-  margin: 4px 0 4px 32px;
+  margin: 4px 0 4px 56px;
   text-indent: -20px;
 }
 .term-text::before,
