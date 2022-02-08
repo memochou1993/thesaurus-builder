@@ -20,14 +20,14 @@ const noteTemplate = document.querySelector('[data-note-template]');
  */
 const render = (target, prop) => {
   const [subject] = subjectTemplate.content.cloneNode(true).children;
-  const [preferredTerm, notes, terms, narrowerTerms] = subject.children;
+  const [preferredTerm, cptNotes, notes, cptTerms, terms, cptNarrowerTerms, narrowerTerms] = subject.children;
   if (!prop?.children?.length) {
-    narrowerTerms.textContent = '';
+    cptNarrowerTerms.classList.add('hidden');
+    preferredTerm.classList.remove('pointer');
   }
   prop.subject.terms.forEach((item) => {
     if (item.preferred) {
       preferredTerm.textContent = item.text;
-      preferredTerm.classList.add(prop?.children?.length ? 'preferred-term-expandable' : 'preferred-term-expanded');
     }
     const [term] = termTemplate.content.cloneNode(true).children;
     const [text] = term.children;
@@ -82,9 +82,9 @@ let data;
 })();
 
 root.addEventListener('click', (e) => {
-  if (e.target.classList.contains('preferred-term-expandable')) {
+  if (e.target.classList.contains('pointer')) {
     e.target.parentElement.querySelector('.narrower-terms').classList.toggle('hidden');
-    e.target.classList.toggle('preferred-term-expanded');
+    e.target.classList.toggle('preferred-term-collapsed');
   }
 });
 
