@@ -20,8 +20,17 @@ const noteTemplate = document.querySelector('[data-note-template]');
 const render = (target, prop) => {
   const [subject] = subjectTemplate.content.cloneNode(true).children;
   const [preferredTerm, cptNotes, notes, cptTerms, terms, cptNarrowerTerms, narrowerTerms] = subject.children;
+  if (!prop.subject.notes?.length) {
+    cptNotes.classList.add('hidden');
+    notes.classList.add('hidden');
+  }
+  if (prop.subject.terms.length === 1) {
+    cptTerms.classList.add('hidden');
+    terms.classList.add('hidden');
+  }
   if (!prop?.children?.length) {
     cptNarrowerTerms.classList.add('hidden');
+    narrowerTerms.classList.add('hidden');
     preferredTerm.classList.remove('pointer');
   }
   prop.subject.terms.forEach((item) => {
